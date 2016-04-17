@@ -7,6 +7,17 @@
   <version>1.0</version>
   <name>MongodbPlugin</name>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>
+
+  <developers>
+    <developer>
+      <name>t-baby</name>
+      <email>t-baby@zomake.com</email>
+      <organization>CYBERMKD</organization>
+      <organizationUrl>http://www.cybermkd.com</organizationUrl>
+    </developer>
+  </developers>
+
+
   <dependencies>
 
     <dependency>

@@ -5,8 +5,8 @@
   <artifactId>MongodbPlugin</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>MongodbPlugin Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+  <name>MongodbPlugin</name>
+  <url>https://github.com/T-baby/MongoDB-Plugin</url>
   <dependencies>
 
     <dependency>

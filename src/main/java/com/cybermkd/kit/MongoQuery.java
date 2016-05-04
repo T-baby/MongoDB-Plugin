@@ -103,7 +103,7 @@ public class MongoQuery {
         return this;
     }
     public MongoQuery byId(String id){
-        query.add(new Document("_id", new ObjectId("5710a81ab73a87092e17a02b")));
+        query.add(new Document("_id", new ObjectId(id)));
         return this;
     }
 

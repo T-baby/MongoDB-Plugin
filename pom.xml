@@ -5,7 +5,7 @@
 
   <groupId>com.cybermkd</groupId>
   <artifactId>MongodbPlugin</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>MongodbPlugin</name>
   <description>帮助JAVA开发者更容易和更舒服使用MongoDB</description>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>

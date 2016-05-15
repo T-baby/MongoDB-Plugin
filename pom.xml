@@ -5,7 +5,7 @@
 
   <groupId>com.cybermkd</groupId>
   <artifactId>MongodbPlugin</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>MongodbPlugin</name>
   <description>帮助JAVA开发者更容易和更舒服使用MongoDB</description>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>
@@ -82,6 +82,14 @@
       <artifactId>resty-common</artifactId>
       <version>1.0</version>
     </dependency>
+
+    <!--SLF4J-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.21</version>
+    </dependency>
+
 
   </dependencies>
   <build>

@@ -9,10 +9,10 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * 创建人:T-baby
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class MongoKit {
 
 
-    protected final Logger logger = Logger.getLogger(this.getClass().getName());
+    final org.slf4j.Logger logger = LoggerFactory.getLogger(MongoKit.class);
 
     private static MongoClient client;
     private static MongoDatabase defaultDb;
@@ -38,25 +38,26 @@ public class MongoKit {
     }
 
     public static long insert(String collectionName, List<Document> docs) {
-        long before=getCollection(collectionName).count();
+        long before = getCollection(collectionName).count();
         getCollection(collectionName).insertMany(docs);
-        return getCollection(collectionName).count()-before;
+        return getCollection(collectionName).count() - before;
     }
 
 
     public static long insert(String collectionName, Document doc) {
-        long before=getCollection(collectionName).count();
+        long before = getCollection(collectionName).count();
         getCollection(collectionName).insertOne(doc);
-        return getCollection(collectionName).count()-before;
+        return getCollection(collectionName).count() - before;
     }
 
 
-    public static List<JSONObject> find(String collectionName){
-        final List<JSONObject> list = new ArrayList<JSONObject>();
+    public static List<JSONObject> find(String collectionName) {
+        List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
             }
         };
@@ -68,11 +69,12 @@ public class MongoKit {
 
     public static List<JSONObject> find(String collectionName, Bson query) {
 
-        final List<JSONObject> list = new ArrayList<JSONObject>();
+        List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
             }
         };
@@ -90,6 +92,7 @@ public class MongoKit {
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
             }
         };
@@ -101,14 +104,14 @@ public class MongoKit {
     }
 
 
-
-    public static List<JSONObject> find(String collectionName, Bson query, Bson sort,int limit) {
+    public static List<JSONObject> find(String collectionName, Bson query, Bson sort, int limit) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
             }
         };
@@ -119,20 +122,16 @@ public class MongoKit {
 
     }
 
-    public static long update(String collectionName, Bson queue,Bson data){
-        UpdateResult updateResult = getCollection(collectionName).updateMany(queue,data);
+    public static long update(String collectionName, Bson queue, Bson data) {
+        UpdateResult updateResult = getCollection(collectionName).updateMany(queue, data);
         return updateResult.getModifiedCount();
     }
 
 
-
-
-
-    public static long delete(String collectionName, Bson queue){
+    public static long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
         return deleteResult.getDeletedCount();
     }
-
 
 
 }

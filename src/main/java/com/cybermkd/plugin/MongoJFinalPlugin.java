@@ -1,9 +1,8 @@
 package com.cybermkd.plugin;
 
+import com.cybermkd.kit.MongoKit;
 import com.jfinal.plugin.IPlugin;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.cybermkd.kit.MongoKit;
 
 import java.util.logging.Logger;
 
@@ -13,39 +12,17 @@ import java.util.logging.Logger;
  * 文件描述:MongoDB for JFinal 插件
  */
 
-public class MongoJFinalPlugin implements IPlugin {
+public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
 
 
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private MongoClient client;
 
-    private MongoClientURI connectionString;
-
-    private String host="mongodb://";
-
-    private String database;
-
-
-
-    public MongoJFinalPlugin(String database,String...host){
-
-        for(int i=0;i<host.length;i++){
-            this.host=this.host+host[i];
-        }
-        this.connectionString = new MongoClientURI(this.host);
-        this.database=database;
-    }
     @Override
     public boolean start() {
-
-        try {
-            client = new MongoClient(connectionString);
-        } catch (Exception e) {
-            throw new RuntimeException("can't connect mongodb, please check the host and port:"+this.host);
-        }
-
-        MongoKit.init(client, database);
+        client = getMongoClient();
+        MongoKit.init(client, getDatabase());
         return true;
     }
 

@@ -13,7 +13,9 @@ public class MongodbTest {
 
     public void init() {
 
-        MongoJFinalPlugin jFinalPlugin = new MongoJFinalPlugin("teemo", "localhost:27017");
+        MongoJFinalPlugin jFinalPlugin = new MongoJFinalPlugin();
+        jFinalPlugin.add("127.0.0.1",27017);
+        jFinalPlugin.setDatabase("test");
         jFinalPlugin.start();
 
     }

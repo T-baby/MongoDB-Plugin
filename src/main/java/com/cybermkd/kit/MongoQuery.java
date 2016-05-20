@@ -2,12 +2,14 @@ package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -23,14 +25,27 @@ public class MongoQuery {
     List<Document> documents = new ArrayList<Document>();
     List<Bson> query = new ArrayList<Bson>();
     List<Bson> data = new ArrayList<Bson>();
+    Bson sort;
 
     public MongoQuery use(String name) {
         this.collectionName = name;
         return this;
     }
 
-    private Document getDocument() {
+    public Document getDocument() {
         return this.document;
+    }
+
+    public List<Document> getDocuments() {
+        return this.documents;
+    }
+
+    public List<Bson> getQuery() {
+        return this.query;
+    }
+
+    public List<Bson> data() {
+        return this.data;
     }
 
     public MongoQuery set(String key, Object value) {
@@ -63,6 +78,12 @@ public class MongoQuery {
         query.add(Filters.ne(key, value));
         return this;
     }
+
+    public MongoQuery in(String key, List values) {
+        query.add(Filters.in(key, values));
+        return this;
+    }
+
 
     public MongoQuery gt(String key, Object value) {
         query.add(Filters.gt(key, value));
@@ -136,17 +157,35 @@ public class MongoQuery {
         return MongoKit.find(collectionName);
     }
 
-    public List<JSONObject> find() {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query));
+    public List<JSONObject> findAll(int limit) {
+        return MongoKit.find(collectionName, limit, sort);
     }
 
-    public List<JSONObject> find(Bson sort) {
+    public List<JSONObject> find() {
         return MongoKit.find(collectionName, Filters.and((Iterable) query), sort);
     }
 
+    public MongoQuery ascending(String... fieldNames) {
+        this.sort = Sorts.ascending(Arrays.asList(fieldNames));
+        return this;
+    }
 
-    public List<JSONObject> find(Bson sort, int limit) {
+    public MongoQuery descending(String... fieldNames) {
+        this.sort = Sorts.descending(Arrays.asList(fieldNames));
+        return this;
+    }
+
+    public long count() {
+        return MongoKit.count(collectionName, Filters.and((Iterable) query));
+    }
+
+
+    public List<JSONObject> find(int limit) {
         return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, limit);
+    }
+
+    public List<JSONObject> find(int limit, int skip) {
+        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, limit, skip);
     }
 
 

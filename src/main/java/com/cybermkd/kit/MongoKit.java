@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
@@ -52,61 +53,38 @@ public class MongoKit {
 
 
     public static List<JSONObject> find(String collectionName) {
-        List<JSONObject> list = new ArrayList<JSONObject>();
+        return find(collectionName, new BsonDocument(), new BsonDocument(), 0, 0);
+    }
 
-        Block<Document> block = new Block<Document>() {
-
-            public void apply(final Document document) {
-                document.put("_id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson()));
-            }
-        };
-
-        getCollection(collectionName).find().forEach(block);
-
-        return list;
+    public static List<JSONObject> find(String collectionName, int limit, Bson sort) {
+        return find(collectionName, new BsonDocument(), sort, limit, 0);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query) {
+        return find(collectionName, query, new BsonDocument(), 0, 0);
+    }
 
-        List<JSONObject> list = new ArrayList<JSONObject>();
 
-        Block<Document> block = new Block<Document>() {
+    public static long count(String collectionName, Bson query) {
+        return getCollection(collectionName).count(query);
+    }
 
-            public void apply(final Document document) {
-                document.put("_id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson()));
-            }
-        };
-
-        getCollection(collectionName).find(query).forEach(block);
-
-        return list;
-
+    public static long count(String collectionName) {
+        return getCollection(collectionName).count();
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson sort) {
-
-        final List<JSONObject> list = new ArrayList<JSONObject>();
-
-        Block<Document> block = new Block<Document>() {
-
-            public void apply(final Document document) {
-                document.put("_id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson()));
-            }
-        };
-
-        getCollection(collectionName).find(query).sort(sort).forEach(block);
-
-        return list;
-
+        return find(collectionName, query, sort, 0, 0);
     }
 
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson sort, int limit) {
+        return find(collectionName, query, sort, limit, 0);
+    }
 
-        final List<JSONObject> list = new ArrayList<JSONObject>();
+    public static List<JSONObject> find(String collectionName, Bson query, Bson sort, int limit, int skip) {
+
+        List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
@@ -116,11 +94,12 @@ public class MongoKit {
             }
         };
 
-        getCollection(collectionName).find(query).sort(sort).limit(limit).forEach(block);
+        getCollection(collectionName).find(query).sort(sort).limit(limit).skip(skip).forEach(block);
 
         return list;
 
     }
+
 
     public static long update(String collectionName, Bson queue, Bson data) {
         UpdateResult updateResult = getCollection(collectionName).updateMany(queue, data);

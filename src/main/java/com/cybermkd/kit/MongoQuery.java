@@ -43,6 +43,16 @@ public class MongoQuery {
         return this;
     }
 
+    /**
+     * 用于支持更多的原生方法
+     * @param bson
+     * @return
+     */
+    public MongoQuery add(Bson bson){
+        data.add(bson);
+        return this;
+    }
+
     public MongoQuery filter(Bson filter){
         query.add(filter);
         return this;
@@ -55,6 +65,25 @@ public class MongoQuery {
 
     public MongoQuery ne(String key, Object value){
         query.add(Filters.ne(key, value));
+        return this;
+    }
+
+    /**
+     * 添加 in 方法，支持 id 的 in 操作
+     * @param key
+     * @param values
+     * @return
+     */
+    public MongoQuery in(String key, List values) {
+        if ("_id".equals(key)) {
+            List<ObjectId> valueList = new ArrayList<ObjectId>();
+            for (Object obj : values){
+                valueList.add(new ObjectId(String.valueOf(obj)));
+            }
+            query.add(Filters.in(key, valueList));
+        } else {
+            query.add(Filters.in(key, values));
+        }
         return this;
     }
 
@@ -80,6 +109,18 @@ public class MongoQuery {
 
     public MongoQuery modify(String key, Object value){
         data.add(Updates.set(key,value));
+        return this;
+    }
+
+    /**
+     * 重载modify方法，支持更灵活的修改
+     *
+     * @param key
+     * @param query
+     * @return
+     */
+    public MongoQuery modify(String key, MongoQuery query){
+        data.add(Updates.set(key, query.getDocument()));
         return this;
     }
 

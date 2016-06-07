@@ -26,6 +26,8 @@ public class MongoQuery {
     List<Bson> query = new ArrayList<Bson>();
     List<Bson> data = new ArrayList<Bson>();
     Bson sort;
+    /*用于记录单挑插入时的id*/
+    String id;
 
     public MongoQuery use(String name) {
         this.collectionName = name;
@@ -42,6 +44,10 @@ public class MongoQuery {
 
     public List<Bson> getQuery() {
         return this.query;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<Bson> data() {
@@ -79,8 +85,18 @@ public class MongoQuery {
         return this;
     }
 
+    //支持查询id
     public MongoQuery in(String key, List values) {
-        query.add(Filters.in(key, values));
+        if ("_id".equals(key)) {
+            List<ObjectId> idList = new ArrayList<ObjectId>();
+            idList.forEach(value -> {
+                idList.add(new ObjectId(String.valueOf(value)));
+            });
+            query.add(Filters.in(key, idList));
+        } else {
+            query.add(Filters.in(key, values));
+        }
+
         return this;
     }
 
@@ -107,6 +123,11 @@ public class MongoQuery {
 
     public MongoQuery modify(String key, Object value) {
         data.add(Updates.set(key, value));
+        return this;
+    }
+
+    public MongoQuery modify(String key, MongoQuery query) {
+        data.add(Updates.set(key, query.getDocument()));
         return this;
     }
 
@@ -143,6 +164,7 @@ public class MongoQuery {
 
     public long save() {
         long row = MongoKit.insert(collectionName, document);
+        this.id = this.document.getObjectId("_id").toString();
         document.clear();
         return row;
     }

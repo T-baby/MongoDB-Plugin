@@ -1,6 +1,7 @@
 package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
@@ -26,8 +27,13 @@ public class MongoQuery {
     List<Bson> query = new ArrayList<Bson>();
     List<Bson> data = new ArrayList<Bson>();
     Bson sort;
+    Bson projection;
     /*用于记录单挑插入时的id*/
     String id;
+    int limit=0;
+    int skip=0;
+
+
 
     public MongoQuery use(String name) {
         this.collectionName = name;
@@ -175,16 +181,33 @@ public class MongoQuery {
         return row;
     }
 
-    public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName);
+
+    public MongoQuery projection(String... keys) {
+        for (String key : keys) {
+            this.projection = new BasicDBObject().append(key, 1);
+        }
+        return this;
     }
 
-    public List<JSONObject> findAll(int limit) {
-        return MongoKit.find(collectionName, limit, sort);
+
+
+    public MongoQuery limit(int i){
+        this.limit=i;
+        return this;
     }
+
+    public MongoQuery skip(int i){
+        this.skip=i;
+        return this;
+    }
+
+    public List<JSONObject> findAll() {
+        return MongoKit.find(collectionName,limit,sort,projection);
+    }
+
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort);
+        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection,limit,skip);
     }
 
     public MongoQuery ascending(String... fieldNames) {
@@ -201,14 +224,6 @@ public class MongoQuery {
         return MongoKit.count(collectionName, Filters.and((Iterable) query));
     }
 
-
-    public List<JSONObject> find(int limit) {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, limit);
-    }
-
-    public List<JSONObject> find(int limit, int skip) {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, limit, skip);
-    }
 
 
     public long update() {

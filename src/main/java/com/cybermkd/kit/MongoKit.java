@@ -52,16 +52,16 @@ public class MongoKit {
     }
 
 
-    public static List<JSONObject> find(String collectionName) {
-        return find(collectionName, new BsonDocument(), new BsonDocument(), 0, 0);
+    public static List<JSONObject> find(String collectionName,Bson projection) {
+        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort) {
-        return find(collectionName, new BsonDocument(), sort, limit, 0);
+    public static List<JSONObject> find(String collectionName, int limit, Bson sort,Bson projection) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query) {
-        return find(collectionName, query, new BsonDocument(), 0, 0);
+    public static List<JSONObject> find(String collectionName, Bson query,Bson projection) {
+        return find(collectionName, query, projection, new BsonDocument(), 0, 0);
     }
 
 
@@ -73,18 +73,11 @@ public class MongoKit {
         return getCollection(collectionName).count();
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson sort) {
-        return find(collectionName, query, sort, 0, 0);
-    }
 
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson sort, int limit) {
-        return find(collectionName, query, sort, limit, 0);
-    }
+    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson sort, int limit, int skip) {
-
-        List<JSONObject> list = new ArrayList<JSONObject>();
+        final List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
@@ -94,7 +87,7 @@ public class MongoKit {
             }
         };
 
-        getCollection(collectionName).find(query).sort(sort).limit(limit).skip(skip).forEach(block);
+        getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
 
         return list;
 

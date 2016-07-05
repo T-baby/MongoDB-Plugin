@@ -43,7 +43,7 @@ public class MongoPaginate {
 
     public MongoPage find() {
         this.list = query.limit(count).skip(skip()).find();
-        return new MongoPage(count,page,totalPage,totalRow,firstPage,lastPage,list);
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
     }
 
 

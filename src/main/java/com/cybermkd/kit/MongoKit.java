@@ -12,8 +12,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * 创建人:T-baby
@@ -52,15 +54,20 @@ public class MongoKit {
     }
 
 
-    public static List<JSONObject> find(String collectionName,Bson projection) {
+    public static List<JSONObject> find(String collectionName, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort,Bson projection) {
+    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query,Bson projection) {
+    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Type clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
+    }
+
+
+    public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
         return find(collectionName, query, projection, new BsonDocument(), 0, 0);
     }
 
@@ -74,7 +81,6 @@ public class MongoKit {
     }
 
 
-
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -84,6 +90,24 @@ public class MongoKit {
             public void apply(final Document document) {
                 document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
+            }
+        };
+
+        getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
+
+        return list;
+
+    }
+
+    public static List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Type clazz) {
+
+        final List list = new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
+                list.add(JSONObject.parseObject(document.toJson(),clazz));
             }
         };
 

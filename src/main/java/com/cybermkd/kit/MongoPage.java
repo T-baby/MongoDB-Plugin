@@ -19,16 +19,16 @@ public class MongoPage {
     private boolean lastPage = false;
     private List<JSONObject> list = new ArrayList<JSONObject>();
 
-    public MongoPage(int count,int page,int totalPage,long totalRow,boolean firstPage,
-                     boolean lastPage,List<JSONObject> result){
+    public MongoPage(int count, int page, int totalPage, long totalRow, boolean firstPage,
+                     boolean lastPage, List<JSONObject> result) {
 
-        this.count=count;
-        this.page=page;
-        this.totalPage=totalPage;
-        this.totalRow=totalRow;
-        this.firstPage=firstPage;
-        this.lastPage=lastPage;
-        this.list=result;
+        this.count = count;
+        this.page = page;
+        this.totalPage = totalPage;
+        this.totalRow = totalRow;
+        this.firstPage = firstPage;
+        this.lastPage = lastPage;
+        this.list = result;
 
     }
 

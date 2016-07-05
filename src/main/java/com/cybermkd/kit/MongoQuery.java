@@ -1,5 +1,6 @@
 package com.cybermkd.kit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
@@ -30,9 +31,8 @@ public class MongoQuery {
     Bson projection;
     /*用于记录单挑插入时的id*/
     String id;
-    int limit=0;
-    int skip=0;
-
+    int limit = 0;
+    int skip = 0;
 
 
     public MongoQuery use(String name) {
@@ -62,6 +62,12 @@ public class MongoQuery {
 
     public MongoQuery set(String key, Object value) {
         document.append(key, value);
+        return this;
+    }
+
+    /*支持java bean*/
+    public MongoQuery set(Object obj) {
+        document= Document.parse(JSON.toJSONString(obj));
         return this;
     }
 
@@ -190,24 +196,31 @@ public class MongoQuery {
     }
 
 
-
-    public MongoQuery limit(int i){
-        this.limit=i;
+    public MongoQuery limit(int i) {
+        this.limit = i;
         return this;
     }
 
-    public MongoQuery skip(int i){
-        this.skip=i;
+    public MongoQuery skip(int i) {
+        this.skip = i;
         return this;
     }
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName,limit,sort,projection);
+        return MongoKit.find(collectionName, limit, sort, projection);
+    }
+
+    public <T> List<JSONObject> findAll(Class<T> clazz) {
+        return MongoKit.find(collectionName, limit, sort, projection,clazz);
     }
 
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection,limit,skip);
+        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip);
+    }
+
+    public <T> List<JSONObject> find(Class<T> clazz) {
+        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip,clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {
@@ -223,7 +236,6 @@ public class MongoQuery {
     public long count() {
         return MongoKit.count(collectionName, Filters.and((Iterable) query));
     }
-
 
 
     public long update() {

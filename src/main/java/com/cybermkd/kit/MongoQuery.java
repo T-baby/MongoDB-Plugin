@@ -219,7 +219,7 @@ public class MongoQuery {
         return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip);
     }
 
-    public <T> List<JSONObject> find(Class<T> clazz) {
+    public <T> List find(Class<T> clazz) {
         return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip,clazz);
     }
 

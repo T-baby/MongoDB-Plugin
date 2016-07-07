@@ -1,5 +1,6 @@
-package com.zomake.plugin.MongoPlugin.kit;
+package com.cybermkd.kit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
@@ -100,13 +101,13 @@ public class MongoKit {
 
     public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
 
-        final List list = null;
+        final List list=new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
                 document.put("_id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson(),clazz));
+                list.add(JSON.parseObject(document.toJson(),clazz));
             }
         };
 

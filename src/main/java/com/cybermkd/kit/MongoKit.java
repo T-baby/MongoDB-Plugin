@@ -1,4 +1,4 @@
-package com.cybermkd.kit;
+package com.zomake.plugin.MongoPlugin.kit;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.Block;
@@ -12,7 +12,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class MongoKit {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Type clazz) {
+    public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
     }
 
@@ -99,9 +98,9 @@ public class MongoKit {
 
     }
 
-    public static List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Type clazz) {
+    public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
 
-        final List list = new ArrayList();
+        final List list = null;
 
         Block<Document> block = new Block<Document>() {
 

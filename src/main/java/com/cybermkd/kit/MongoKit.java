@@ -1,5 +1,6 @@
 package com.cybermkd.kit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * 创建人:T-baby
@@ -52,15 +54,20 @@ public class MongoKit {
     }
 
 
-    public static List<JSONObject> find(String collectionName,Bson projection) {
+    public static List<JSONObject> find(String collectionName, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort,Bson projection) {
+    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query,Bson projection) {
+    public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
+    }
+
+
+    public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
         return find(collectionName, query, projection, new BsonDocument(), 0, 0);
     }
 
@@ -74,7 +81,6 @@ public class MongoKit {
     }
 
 
-
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -84,6 +90,24 @@ public class MongoKit {
             public void apply(final Document document) {
                 document.put("_id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
+            }
+        };
+
+        getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
+
+        return list;
+
+    }
+
+    public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
+
+        final List list=new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(final Document document) {
+                document.put("_id", document.get("_id").toString());
+                list.add(JSON.parseObject(document.toJson(),clazz));
             }
         };
 

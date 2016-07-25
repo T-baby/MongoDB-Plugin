@@ -13,8 +13,12 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -29,7 +33,7 @@ public class MongoKit {
 
     private static MongoClient client;
     private static MongoDatabase defaultDb;
-
+    private static Validator validator;
 
     public static void init(MongoClient client, String database) {
         MongoKit.client = client;
@@ -127,6 +131,21 @@ public class MongoKit {
     public static long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
         return deleteResult.getDeletedCount();
+    }
+
+    public static String validation(Object obj){
+
+        StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
+
+        Validator validator = Validation.buildDefaultValidatorFactory()
+                .getValidator();
+
+        Set<ConstraintViolation<Object>> constraintViolations = validator
+                .validate(obj);//验证某个对象,其实也可以只验证其中的某一个属性的
+
+        constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
+
+        return buffer.toString();
     }
 
 

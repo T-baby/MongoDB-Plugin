@@ -5,7 +5,7 @@
 
   <groupId>com.cybermkd</groupId>
   <artifactId>MongodbPlugin</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <name>MongodbPlugin</name>
   <description>帮助JAVA开发者更容易和更舒服使用MongoDB</description>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>
@@ -21,6 +21,19 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 
 
@@ -88,6 +101,25 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.21</version>
+    </dependency>
+
+    <!--参数校验-->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>5.3.0.Alpha1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>javax.el-api</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.web</groupId>
+      <artifactId>javax.el</artifactId>
+      <version>2.2.4</version>
     </dependency>
 
 

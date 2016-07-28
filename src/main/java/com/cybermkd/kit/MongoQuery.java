@@ -1,5 +1,6 @@
 package com.cybermkd.kit;
 
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
@@ -67,7 +68,7 @@ public class MongoQuery {
 
     /*支持java bean*/
     public MongoQuery set(Object obj) {
-        document= Document.parse(JSON.toJSONString(obj));
+        document = Document.parse(JSON.toJSONString(obj));
         return this;
     }
 
@@ -133,13 +134,23 @@ public class MongoQuery {
         return this;
     }
 
-    public MongoQuery modify(String key, Object value) {
-        data.add(Updates.set(key, value));
+    public MongoQuery modify(String key, MongoQuery query) {
+        this.modify(key, query.getDocument());
         return this;
     }
 
-    public MongoQuery modify(String key, MongoQuery query) {
-        data.add(Updates.set(key, query.getDocument()));
+    public MongoQuery modify(Object obj) {
+        JSONObject json = (JSONObject) JSON.toJSON(obj);
+        for(String key :  json.keySet()) {
+            if (json.getString(key)!=null&&!json.getString(key).isEmpty()){
+                this.modify(key, json.getString(key));
+            }
+        }
+        return this;
+    }
+
+    public MongoQuery modify(String key, Object value) {
+        data.add(Updates.set(key, value));
         return this;
     }
 
@@ -206,12 +217,13 @@ public class MongoQuery {
         return this;
     }
 
+
     public List<JSONObject> findAll() {
         return MongoKit.find(collectionName, limit, sort, projection);
     }
 
     public <T> List<JSONObject> findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit, sort, projection,clazz);
+        return MongoKit.find(collectionName, limit, sort, projection, clazz);
     }
 
 
@@ -220,7 +232,7 @@ public class MongoQuery {
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip,clazz);
+        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip, clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {

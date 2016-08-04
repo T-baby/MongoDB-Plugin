@@ -103,10 +103,30 @@ public class MongodbTest {
     @Test
     public void testNotNull() {
         init();
-        MongoQuery query = new MongoQuery();
         AccountBean bean = new AccountBean();
-        System.out.println(bean.validation());
+        System.out.println(bean.validation("password", "username"));
+    }
+
+    @Test
+    public void testChinese() {
+        init();
+        AccountBean bean = new AccountBean();
+        bean.setUsername("ss");
+        System.out.println(bean.validation("password", "username"));
         System.out.println(bean.getErrorMessage());
     }
+
+    @Test
+    public void testSafe() {
+        init();
+        AccountBean bean = new AccountBean();
+        bean.setPassword("<script>sss</script>");
+        System.out.println(bean.validation("password"));
+        System.out.println(bean.getErrorMessage());
+    }
+
+
+
+
 }
 

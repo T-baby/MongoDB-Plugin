@@ -1,6 +1,6 @@
+import com.cybermkd.constraints.Chinese;
 import com.cybermkd.kit.MongoValidate;
-
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.SafeHtml;
 
 /**
  * 创建人:T-baby
@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
  */
 public class AccountBean extends MongoValidate{
 
-    @NotNull
+    @Chinese(value = true)
     private String username;
-
+    @SafeHtml
     private String password;
 
     public String getPassword() {

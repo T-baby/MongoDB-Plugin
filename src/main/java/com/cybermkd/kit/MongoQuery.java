@@ -102,7 +102,7 @@ public class MongoQuery {
     public MongoQuery in(String key, List values) {
         if ("_id".equals(key)) {
             List<ObjectId> idList = new ArrayList<ObjectId>();
-            idList.forEach(value -> {
+            values.forEach(value -> {
                 idList.add(new ObjectId(String.valueOf(value)));
             });
             query.add(Filters.in(key, idList));

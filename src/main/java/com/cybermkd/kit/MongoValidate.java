@@ -15,6 +15,11 @@ public class MongoValidate {
         return validateErrorMessage.isEmpty();
     }
 
+    public boolean validation(String... keys) {
+        validateErrorMessage = MongoKit.validation(this,keys);
+        return validateErrorMessage.isEmpty();
+    }
+
     public String getErrorMessage() {
         return validateErrorMessage;
     }

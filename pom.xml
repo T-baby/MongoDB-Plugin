@@ -5,7 +5,7 @@
 
   <groupId>com.cybermkd</groupId>
   <artifactId>MongodbPlugin</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <name>MongodbPlugin</name>
   <description>帮助JAVA开发者更容易和更舒服使用MongoDB</description>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>
@@ -21,19 +21,6 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-
-  <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
 
 
@@ -96,6 +83,13 @@
       <version>1.0</version>
     </dependency>
 
+    <!--ICEREST-->
+    <dependency>
+      <groupId>com.cybermkd</groupId>
+      <artifactId>ICEREST</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
     <!--SLF4J-->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -122,6 +116,12 @@
       <version>2.2.4</version>
     </dependency>
 
+    <!--参数安全校验-->
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.9.2</version>
+    </dependency>
 
   </dependencies>
   <build>

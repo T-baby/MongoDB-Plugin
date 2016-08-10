@@ -16,9 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -148,6 +146,29 @@ public class MongoKit {
         return buffer.toString();
     }
 
+    //校验单个属性
+    public static String validation(Object obj,String[] keys){
+
+        StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
+
+        Validator validator = Validation.buildDefaultValidatorFactory()
+                .getValidator();
+
+        Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
+
+        for (String key:keys){
+            Iterator<ConstraintViolation<Object>> it=validator.validateProperty(obj,key).iterator();
+            if (it.hasNext()){
+                constraintViolations.add(it.next());
+            }
+
+        }
+
+
+        constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
+
+        return buffer.toString();
+    }
 
 }
 

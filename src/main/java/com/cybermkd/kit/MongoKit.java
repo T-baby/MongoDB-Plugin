@@ -90,7 +90,7 @@ public class MongoKit {
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
-                document.put("_id", document.get("_id").toString());
+                document.put("id", document.get("_id").toString());
                 list.add(JSONObject.parseObject(document.toJson()));
             }
         };
@@ -108,7 +108,7 @@ public class MongoKit {
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
-                document.put("_id", document.get("_id").toString());
+                document.put("id", document.get("_id").toString());
                 list.add(JSON.parseObject(document.toJson(),clazz));
             }
         };

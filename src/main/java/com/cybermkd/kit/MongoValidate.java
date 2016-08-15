@@ -20,7 +20,7 @@ public class MongoValidate {
         return validateErrorMessage.isEmpty();
     }
 
-    public String getErrorMessage() {
+    public String ErrorMessage() {
         return validateErrorMessage;
     }
 }

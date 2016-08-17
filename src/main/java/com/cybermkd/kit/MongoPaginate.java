@@ -19,7 +19,7 @@ public class MongoPaginate {
     private MongoQuery query;
     private boolean firstPage = false;
     private boolean lastPage = false;
-    private List<JSONObject> list = new ArrayList<JSONObject>();
+    private List list = new ArrayList();
 
     public MongoPaginate(MongoQuery query, int count, int page) {
         this.query = query;
@@ -43,6 +43,10 @@ public class MongoPaginate {
 
     public MongoPage find() {
         this.list = query.limit(count).skip(skip()).find();
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
+    public MongoPage find(Class c) {
+        this.list = query.limit(count).skip(skip()).find(c);
         return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
     }
 

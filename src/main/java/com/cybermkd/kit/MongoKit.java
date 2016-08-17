@@ -6,6 +6,7 @@ import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
@@ -65,7 +66,7 @@ public class MongoKit {
     }
 
     public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, clazz);
     }
 
 
@@ -103,13 +104,13 @@ public class MongoKit {
 
     public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
 
-        final List list=new ArrayList();
+        final List list = new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
                 document.put("id", document.get("_id").toString());
-                list.add(JSON.parseObject(document.toJson(),clazz));
+                list.add(JSON.parseObject(document.toJson(), clazz));
             }
         };
 
@@ -131,7 +132,7 @@ public class MongoKit {
         return deleteResult.getDeletedCount();
     }
 
-    public static String validation(Object obj){
+    public static String validation(Object obj) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -147,7 +148,7 @@ public class MongoKit {
     }
 
     //校验单个属性
-    public static String validation(Object obj,String[] keys){
+    public static String validation(Object obj, String[] keys) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -156,9 +157,9 @@ public class MongoKit {
 
         Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        for (String key:keys){
-            Iterator<ConstraintViolation<Object>> it=validator.validateProperty(obj,key).iterator();
-            if (it.hasNext()){
+        for (String key : keys) {
+            Iterator<ConstraintViolation<Object>> it = validator.validateProperty(obj, key).iterator();
+            if (it.hasNext()) {
                 constraintViolations.add(it.next());
             }
 
@@ -170,6 +171,10 @@ public class MongoKit {
         return buffer.toString();
     }
 
+
+    public static Bson and(List<Bson> query) {
+        return query.size() == 0 ? new BsonDocument() : Filters.and((Iterable) query);
+    }
 }
 
 

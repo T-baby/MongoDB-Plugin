@@ -90,6 +90,12 @@ public class MongoKit {
     }
 
 
+    public static JSONObject findOne(String collectionName, Bson query){
+        return JSON.parseObject(getCollection(collectionName).find().first().toJson());
+    }
+
+
+
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -98,7 +104,7 @@ public class MongoKit {
 
             public void apply(final Document document) {
                 document.put("id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson()));
+                list.add(JSON.parseObject(document.toJson()));
             }
         };
 

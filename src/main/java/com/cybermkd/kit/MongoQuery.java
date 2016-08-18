@@ -231,6 +231,13 @@ public class MongoQuery {
         return MongoKit.find(collectionName, limit,skip, sort, projection, clazz);
     }
 
+    public JSONObject findById(String id) {
+        return find().get(0);
+    }
+
+    public JSONObject findOne() {
+        return MongoKit.findOne(collectionName, and(query));
+    }
 
     public List<JSONObject> find() {
         return MongoKit.find(collectionName, and(query), sort, projection, limit, skip);

@@ -64,10 +64,17 @@ public class MongoKit {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
+    public static List<JSONObject> find(String collectionName, int limit,int skip, Bson sort, Bson projection) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
+    }
+
     public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
     }
 
+    public static <T> List<JSONObject> find(String collectionName, int limit,int skip, Bson sort, Bson projection, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit,skip,clazz);
+    }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
         return find(collectionName, query, projection, new BsonDocument(), 0, 0);
@@ -102,6 +109,7 @@ public class MongoKit {
     }
 
     public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
+
 
         final List list=new ArrayList();
 

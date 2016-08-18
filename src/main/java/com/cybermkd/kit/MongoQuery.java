@@ -224,11 +224,11 @@ public class MongoQuery {
 
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit, sort, projection);
+        return MongoKit.find(collectionName, limit,skip, sort, projection);
     }
 
     public <T> List<JSONObject> findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit, sort, projection, clazz);
+        return MongoKit.find(collectionName, limit,skip, sort, projection, clazz);
     }
 
 

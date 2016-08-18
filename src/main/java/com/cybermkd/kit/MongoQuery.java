@@ -7,6 +7,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -39,6 +40,10 @@ public class MongoQuery {
     public MongoQuery use(String name) {
         this.collectionName = name;
         return this;
+    }
+
+    public static Bson and(List<Bson> query) {
+        return query.size() == 0 ? new BsonDocument() : Filters.and((Iterable) query);
     }
 
     public Document getDocument() {
@@ -228,11 +233,11 @@ public class MongoQuery {
 
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip);
+        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip, clazz);
+        return MongoKit.find(collectionName, and( query), sort, projection, limit, skip, clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {
@@ -246,16 +251,16 @@ public class MongoQuery {
     }
 
     public long count() {
-        return MongoKit.count(collectionName, Filters.and((Iterable) query));
+        return MongoKit.count(collectionName, and(query));
     }
 
 
     public long update() {
-        return MongoKit.update(collectionName, Filters.and((Iterable) query), Updates.combine(data));
+        return MongoKit.update(collectionName, and(query), Updates.combine(data));
     }
 
     public long delete() {
-        return MongoKit.delete(collectionName, Filters.and((Iterable) query));
+        return MongoKit.delete(collectionName, and(query));
     }
 
 

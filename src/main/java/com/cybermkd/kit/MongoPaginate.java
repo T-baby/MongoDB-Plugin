@@ -46,6 +46,20 @@ public class MongoPaginate {
         return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
     }
 
+    public <T> MongoPage find(Class<T> clazz) {
+        this.list = query.limit(count).skip(skip()).find(clazz);
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
+
+    public MongoPage findAll() {
+        this.list = query.limit(count).skip(skip()).find();
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
+
+    public <T> MongoPage findAll(Class<T> clazz) {
+        this.list = query.limit(count).skip(skip()).findAll(clazz);
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
 
     private int skip() {
         if (firstPage) {

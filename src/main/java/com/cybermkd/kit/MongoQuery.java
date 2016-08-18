@@ -141,8 +141,8 @@ public class MongoQuery {
 
     public MongoQuery modify(Object obj) {
         JSONObject json = (JSONObject) JSON.toJSON(obj);
-        for(String key :  json.keySet()) {
-            if (json.getString(key)!=null&&!json.getString(key).isEmpty()){
+        for (String key : json.keySet()) {
+            if (json.getString(key) != null && !json.getString(key).isEmpty()) {
                 this.modify(key, json.getString(key));
             }
         }
@@ -228,11 +228,11 @@ public class MongoQuery {
 
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip);
+        return MongoKit.find(collectionName, MongoKit.and(query), sort, projection, limit, skip);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, Filters.and((Iterable) query), sort, projection, limit, skip, clazz);
+        return MongoKit.find(collectionName, MongoKit.and(query), sort, projection, limit, skip, clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {
@@ -246,16 +246,16 @@ public class MongoQuery {
     }
 
     public long count() {
-        return MongoKit.count(collectionName, Filters.and((Iterable) query));
+        return MongoKit.count(collectionName, MongoKit.and(query));
     }
 
 
     public long update() {
-        return MongoKit.update(collectionName, Filters.and((Iterable) query), Updates.combine(data));
+        return MongoKit.update(collectionName, MongoKit.and(query), Updates.combine(data));
     }
 
     public long delete() {
-        return MongoKit.delete(collectionName, Filters.and((Iterable) query));
+        return MongoKit.delete(collectionName, MongoKit.and(query));
     }
 
 

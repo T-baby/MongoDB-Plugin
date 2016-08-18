@@ -1,7 +1,11 @@
 import com.alibaba.fastjson.JSONObject;
+import com.cybermkd.kit.MongoPage;
+import com.cybermkd.kit.MongoPaginate;
 import com.cybermkd.kit.MongoQuery;
 import com.cybermkd.plugin.MongoJFinalPlugin;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * 创建人:T-baby
@@ -13,8 +17,8 @@ public class MongodbTest {
     public void init() {
 
         MongoJFinalPlugin jFinalPlugin = new MongoJFinalPlugin();
-        jFinalPlugin.add("127.0.0.1", 27017);
-        jFinalPlugin.setDatabase("test");
+        jFinalPlugin.add("172.30.20.231", 27017);
+        jFinalPlugin.setDatabase("cstore-mikey");
         jFinalPlugin.start();
 
     }
@@ -126,6 +130,26 @@ public class MongodbTest {
     }
 
 
+    @Test
+    public  void query() {
+        init();
+        MongoQuery query=new MongoQuery();
+        List list = query.use("server").find();
+        System.out.println(list.size());
+//        System.out.println(q.byId("57b44c22283c9f2ca01f055c").find(Server.class));
+    }
+
+    @Test
+    public  void queryPage() {
+        init();
+        MongoQuery query=new MongoQuery();
+        MongoQuery q = query.use("server");
+//        List list = q.find();
+        MongoPaginate mongoPaginate = new MongoPaginate(q,10,10);
+        MongoPage p  = mongoPaginate.find();
+        System.out.println(p);
+//        System.out.println(q.byId("57b44c22283c9f2ca01f055c").find(Server.class));
+    }
 
 
 }

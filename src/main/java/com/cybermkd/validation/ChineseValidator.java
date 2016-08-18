@@ -12,23 +12,24 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class ChineseValidator implements ConstraintValidator<Chinese, String> {
 
-    private boolean value=false;
+    private boolean value = false;
 
     @Override
     public void initialize(Chinese chinese) {
-        value=chinese.value();
+        value = chinese.value();
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
 
-       if (value){
-           return isChinese(s);
-       }else{
-           return !isChinese(s);
-       }
+        if (value) {
+            return isChinese(s);
+        } else {
+            return !isChinese(s);
+        }
 
     }
+
     // 根据Unicode编码判断中文汉字和符号
     private static boolean isChinese(char c) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);

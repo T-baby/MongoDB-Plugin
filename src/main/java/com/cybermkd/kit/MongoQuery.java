@@ -146,8 +146,8 @@ public class MongoQuery {
 
     public MongoQuery modify(Object obj) {
         JSONObject json = (JSONObject) JSON.toJSON(obj);
-        for(String key :  json.keySet()) {
-            if (json.getString(key)!=null&&!json.getString(key).isEmpty()){
+        for (String key : json.keySet()) {
+            if (json.getString(key) != null && !json.getString(key).isEmpty()) {
                 this.modify(key, json.getString(key));
             }
         }
@@ -224,11 +224,11 @@ public class MongoQuery {
 
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit,skip, sort, projection);
+        return MongoKit.find(collectionName, limit, skip, sort, projection);
     }
 
     public <T> List<JSONObject> findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit,skip, sort, projection, clazz);
+        return MongoKit.find(collectionName, limit, skip, sort, projection, clazz);
     }
 
     public JSONObject findById(String id) {
@@ -239,12 +239,16 @@ public class MongoQuery {
         return MongoKit.findOne(collectionName, and(query));
     }
 
+    public <T> Object findOne(Class<T> clazz) {
+        return MongoKit.findOne(collectionName, and(query), clazz);
+    }
+
     public List<JSONObject> find() {
         return MongoKit.find(collectionName, and(query), sort, projection, limit, skip);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, and( query), sort, projection, limit, skip, clazz);
+        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {

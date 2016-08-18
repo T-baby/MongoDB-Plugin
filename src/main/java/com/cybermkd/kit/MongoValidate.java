@@ -16,7 +16,7 @@ public class MongoValidate {
     }
 
     public boolean validation(String... keys) {
-        validateErrorMessage = MongoKit.validation(this,keys);
+        validateErrorMessage = MongoKit.validation(this, keys);
         return validateErrorMessage.isEmpty();
     }
 

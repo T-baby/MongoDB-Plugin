@@ -64,16 +64,16 @@ public class MongoKit {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
-    public static List<JSONObject> find(String collectionName, int limit,int skip, Bson sort, Bson projection) {
+    public static List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
     }
 
     public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, clazz);
     }
 
-    public static <T> List<JSONObject> find(String collectionName, int limit,int skip, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit,skip,clazz);
+    public static <T> List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, clazz);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
@@ -90,11 +90,13 @@ public class MongoKit {
     }
 
 
-    public static JSONObject findOne(String collectionName, Bson query){
+    public static JSONObject findOne(String collectionName, Bson query) {
         return JSON.parseObject(getCollection(collectionName).find().first().toJson());
     }
 
-
+    public static <T> Object findOne(String collectionName, Bson query, Class<T> clazz) {
+        return JSON.parseObject(getCollection(collectionName).find().first().toJson(), clazz);
+    }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
 
@@ -117,13 +119,13 @@ public class MongoKit {
     public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
 
 
-        final List list=new ArrayList();
+        final List list = new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
                 document.put("id", document.get("_id").toString());
-                list.add(JSON.parseObject(document.toJson(),clazz));
+                list.add(JSON.parseObject(document.toJson(), clazz));
             }
         };
 
@@ -145,7 +147,7 @@ public class MongoKit {
         return deleteResult.getDeletedCount();
     }
 
-    public static String validation(Object obj){
+    public static String validation(Object obj) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -161,7 +163,7 @@ public class MongoKit {
     }
 
     //校验单个属性
-    public static String validation(Object obj,String[] keys){
+    public static String validation(Object obj, String[] keys) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -170,9 +172,9 @@ public class MongoKit {
 
         Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        for (String key:keys){
-            Iterator<ConstraintViolation<Object>> it=validator.validateProperty(obj,key).iterator();
-            if (it.hasNext()){
+        for (String key : keys) {
+            Iterator<ConstraintViolation<Object>> it = validator.validateProperty(obj, key).iterator();
+            if (it.hasNext()) {
                 constraintViolations.add(it.next());
             }
 

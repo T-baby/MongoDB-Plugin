@@ -16,20 +16,18 @@ public class InsideValidator implements ConstraintValidator<Inside, String> {
 
     @Override
     public void initialize(Inside inside) {
-        value=inside.value();
+        value = inside.value();
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         for (String text : value) {
-            if (text.equals(s)){
+            if (text.equals(s)) {
                 return true;
             }
         }
         return false;
     }
-
-
 
 
 }

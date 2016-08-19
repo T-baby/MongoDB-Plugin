@@ -1,4 +1,7 @@
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cybermkd.kit.MongoPage;
+import com.cybermkd.kit.MongoPaginate;
 import com.cybermkd.kit.MongoQuery;
 import com.cybermkd.plugin.MongoJFinalPlugin;
 import org.junit.Test;
@@ -54,7 +57,19 @@ public class MongodbTest {
         init();
         MongoQuery query = new MongoQuery();
         System.out.println(query.use("item").findAll());
+        System.out.println(JSON.toJSONString(query.use("item").findAll(AccountBean.class)));
     }
+
+    @Test
+    public void testPageFindAll() {
+        init();
+        MongoQuery query = new MongoQuery().use("item");
+        MongoPaginate painate=new MongoPaginate(query,1,2);
+        MongoPage page=painate.findAll(AccountBean.class);
+        System.out.println(JSON.toJSONString(page));
+    }
+
+
 
     @Test
     public void testFind() {
@@ -113,7 +128,7 @@ public class MongodbTest {
         AccountBean bean = new AccountBean();
         bean.setUsername("ss");
         System.out.println(bean.validation("password", "username"));
-        System.out.println(bean.getErrorMessage());
+        System.out.println(bean.errorMessage());
     }
 
     @Test
@@ -122,7 +137,26 @@ public class MongodbTest {
         AccountBean bean = new AccountBean();
         bean.setPassword("<script>sss</script>");
         System.out.println(bean.validation("password"));
-        System.out.println(bean.getErrorMessage());
+        System.out.println(bean.errorMessage());
+    }
+
+
+    @Test
+    public void testType() {
+        init();
+        AccountBean bean = new AccountBean();
+        bean.setId("12.2");
+        System.out.println(bean.validation("id"));
+        System.out.println(bean.errorMessage());
+    }
+
+    @Test
+    public void testInside() {
+        init();
+        AccountBean bean = new AccountBean();
+        bean.setUsername("xxxx");
+        System.out.println(bean.validation("username"));
+        System.out.println(bean.errorMessage());
     }
 
 

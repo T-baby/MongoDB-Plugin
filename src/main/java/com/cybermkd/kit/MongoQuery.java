@@ -46,6 +46,24 @@ public class MongoQuery {
         return query.size() == 0 ? new BsonDocument() : Filters.and((Iterable) query);
     }
 
+    public MongoQuery or(MongoQuery query) {
+        or(query.getQuery());
+        return this;
+    }
+
+    public static Bson or(List<Bson> query) {
+        return query.size() == 0 ? new BsonDocument() : Filters.or((Iterable) query);
+    }
+
+    public MongoQuery nor(MongoQuery query) {
+        nor(query.getQuery());
+        return this;
+    }
+
+    public static Bson nor(List<Bson> query) {
+        return query.size() == 0 ? new BsonDocument() : Filters.nor((Iterable) query);
+    }
+
     public Document getDocument() {
         return this.document;
     }
@@ -189,7 +207,6 @@ public class MongoQuery {
         return this;
     }
 
-
     public long save() {
         long row = MongoKit.insert(collectionName, document);
         this.id = this.document.getObjectId("_id").toString();
@@ -265,6 +282,9 @@ public class MongoQuery {
         return MongoKit.count(collectionName, and(query));
     }
 
+    public boolean exist() {
+        return this.count() > 0;
+    }
 
     public long update() {
         return MongoKit.update(collectionName, and(query), Updates.combine(data));

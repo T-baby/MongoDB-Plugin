@@ -1,6 +1,11 @@
-import com.cybermkd.constraints.Chinese;
+import com.cybermkd.constraints.Exist;
+import com.cybermkd.constraints.Inside;
+import com.cybermkd.constraints.Type;
 import com.cybermkd.kit.MongoValidate;
+import com.sun.istack.internal.NotNull;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.validation.constraints.Size;
 
 /**
  * 创建人:T-baby
@@ -9,7 +14,14 @@ import org.hibernate.validator.constraints.SafeHtml;
  */
 public class AccountBean extends MongoValidate{
 
-    @Chinese(value = true)
+
+    @Type(value = "int")
+    private String id;
+
+    @NotNull
+    @Inside(value = {"aaa","xxx"})
+    @Size(min = 3,max = 18)
+    @Exist(value = false,collectionName = "item",key = "username")
     private String username;
     @SafeHtml
     private String password;
@@ -30,4 +42,12 @@ public class AccountBean extends MongoValidate{
         this.password = password;
     }
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

@@ -6,6 +6,7 @@ import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
@@ -72,7 +73,7 @@ public class MongoKit {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0, clazz);
     }
 
-    public static <T> List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, Class<T> clazz) {
+    public static <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, Class<T> clazz) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, skip, clazz);
     }
 
@@ -91,11 +92,11 @@ public class MongoKit {
 
 
     public static JSONObject findOne(String collectionName, Bson query) {
-        return JSON.parseObject(getCollection(collectionName).find().first().toJson());
+        return JSON.parseObject(getCollection(collectionName).find(query).first().toJson());
     }
 
-    public static <T> Object findOne(String collectionName, Bson query, Class<T> clazz) {
-        return JSON.parseObject(getCollection(collectionName).find().first().toJson(), clazz);
+    public static <T> T findOne(String collectionName, Bson query, Class<T> clazz) {
+        return JSON.parseObject(getCollection(collectionName).find(query).first().toJson(), clazz);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
@@ -186,8 +187,40 @@ public class MongoKit {
         return buffer.toString();
     }
 
-}
+    public static String setIndex(String collectionName, Bson bson) {
+        return getCollection(collectionName).createIndex(bson);
+    }
 
+    public static List<String> setIndex(String collectionName, List<IndexModel> list) {
+        return getCollection(collectionName).createIndexes(list);
+    }
+
+    public static List<JSONObject> getIndex(String collectionName) {
+
+        List list = new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(final Document document) {
+                list.add(JSON.parseObject(document.toJson()));
+            }
+        };
+
+        getCollection(collectionName).listIndexes().forEach(block);
+
+        return list;
+    }
+
+    public static void deleteIndex(String collectionName, Bson bson) {
+
+        getCollection(collectionName).dropIndex(bson);
+
+    }
+
+    public static void deleteIndex(String collectionName) {
+        getCollection(collectionName).dropIndexes();
+    }
+}
 
 
 

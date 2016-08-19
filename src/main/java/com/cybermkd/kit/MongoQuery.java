@@ -47,7 +47,7 @@ public class MongoQuery {
     }
 
     public MongoQuery or(MongoQuery query) {
-        or(query.getQuery());
+        query.add(or(query.getQuery()));
         return this;
     }
 
@@ -56,7 +56,7 @@ public class MongoQuery {
     }
 
     public MongoQuery nor(MongoQuery query) {
-        nor(query.getQuery());
+        query.add(nor(query.getQuery()));
         return this;
     }
 
@@ -244,19 +244,16 @@ public class MongoQuery {
         return MongoKit.find(collectionName, limit, skip, sort, projection);
     }
 
-    public <T> List<JSONObject> findAll(Class<T> clazz) {
+    public <T> List findAll(Class<T> clazz) {
         return MongoKit.find(collectionName, limit, skip, sort, projection, clazz);
     }
 
-    public JSONObject findById(String id) {
-        return find().get(0);
-    }
 
     public JSONObject findOne() {
         return MongoKit.findOne(collectionName, and(query));
     }
 
-    public <T> Object findOne(Class<T> clazz) {
+    public <T> T findOne(Class<T> clazz) {
         return MongoKit.findOne(collectionName, and(query), clazz);
     }
 
@@ -282,6 +279,14 @@ public class MongoQuery {
         return MongoKit.count(collectionName, and(query));
     }
 
+    /*存在某个key*/
+    public MongoQuery exist(String key) {
+        set(Filters.exists(key));
+        return this;
+    }
+
+
+    /*判断某个值是否存在*/
     public boolean exist() {
         return this.count() > 0;
     }
@@ -293,6 +298,7 @@ public class MongoQuery {
     public long delete() {
         return MongoKit.delete(collectionName, and(query));
     }
+
 
 
 }

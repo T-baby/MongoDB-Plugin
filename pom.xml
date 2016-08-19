@@ -5,7 +5,7 @@
 
   <groupId>com.cybermkd</groupId>
   <artifactId>MongodbPlugin</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   <name>MongodbPlugin</name>
   <description>帮助JAVA开发者更容易和更舒服使用MongoDB</description>
   <url>https://github.com/T-baby/MongoDB-Plugin</url>
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.2.2</version>
+      <version>3.3.0</version>
     </dependency>
 
     <!--JSON插件-->
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>com.cybermkd</groupId>
       <artifactId>ICEREST</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1.2</version>
     </dependency>
 
     <!--SLF4J-->
@@ -123,9 +123,32 @@
       <version>1.9.2</version>
     </dependency>
 
+    <!--参数日期校验-->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.9.4</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>MongodbPlugin</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>

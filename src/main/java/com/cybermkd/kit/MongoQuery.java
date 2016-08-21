@@ -295,10 +295,17 @@ public class MongoQuery {
         return MongoKit.update(collectionName, and(query), Updates.combine(data));
     }
 
+    public long updateOne() {
+        return MongoKit.updateOne(collectionName, and(query), Updates.combine(data));
+    }
+
     public long delete() {
         return MongoKit.delete(collectionName, and(query));
     }
 
+    public long deleteOne() {
+        return MongoKit.deleteOne(collectionName, and(query));
+    }
 
 
 }

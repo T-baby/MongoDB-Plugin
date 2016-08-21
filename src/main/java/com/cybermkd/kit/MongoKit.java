@@ -92,11 +92,11 @@ public class MongoKit {
 
 
     public static JSONObject findOne(String collectionName, Bson query) {
-        return JSON.parseObject(getCollection(collectionName).find(query).first().toJson());
+        return (JSONObject) JSON.toJSON(getCollection(collectionName).find(query).first());
     }
 
     public static <T> T findOne(String collectionName, Bson query, Class<T> clazz) {
-        return JSON.parseObject(getCollection(collectionName).find(query).first().toJson(), clazz);
+        return JSON.parseObject(JSON.toJSONString(getCollection(collectionName).find(query).first()), clazz);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
@@ -107,7 +107,7 @@ public class MongoKit {
 
             public void apply(final Document document) {
                 document.put("id", document.get("_id").toString());
-                list.add(JSON.parseObject(document.toJson()));
+                list.add((JSONObject) JSON.toJSON(document));
             }
         };
 
@@ -126,7 +126,7 @@ public class MongoKit {
 
             public void apply(final Document document) {
                 document.put("id", document.get("_id").toString());
-                list.add(JSON.parseObject(document.toJson(), clazz));
+                list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
             }
         };
 
@@ -142,9 +142,19 @@ public class MongoKit {
         return updateResult.getModifiedCount();
     }
 
+    public static long updateOne(String collectionName, Bson queue, Bson data) {
+        UpdateResult updateResult = getCollection(collectionName).updateOne(queue, data);
+        return updateResult.getModifiedCount();
+    }
+
 
     public static long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
+        return deleteResult.getDeletedCount();
+    }
+
+    public static long deleteOne(String collectionName, Bson queue) {
+        DeleteResult deleteResult = getCollection(collectionName).deleteOne(queue);
         return deleteResult.getDeletedCount();
     }
 
@@ -220,6 +230,8 @@ public class MongoKit {
     public static void deleteIndex(String collectionName) {
         getCollection(collectionName).dropIndexes();
     }
+
+
 }
 
 

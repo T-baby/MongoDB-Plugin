@@ -14,7 +14,6 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -27,10 +26,9 @@ import java.util.*;
  * 创建日期: 16/4/15
  * 文件描述:MongoDB操作工具类
  */
-public class MongoKit {
+public enum MongoKit {
 
-
-    final org.slf4j.Logger logger = LoggerFactory.getLogger(MongoKit.class);
+    INSTANS;/*唯一实例*/
 
     private static MongoClient client;
     private static MongoDatabase defaultDb;
@@ -95,14 +93,14 @@ public class MongoKit {
 
     public static JSONObject findOne(String collectionName, Bson query, String join) {
         return (JSONObject) JSON.toJSON(
-                iding(jointing(getCollection(collectionName).find(query).first(),join))
+                iding(jointing(getCollection(collectionName).find(query).first(), join))
         );
     }
 
     public static <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
         return JSON.parseObject(JSON.toJSONString(
-                iding(jointing(getCollection(collectionName).find(query).first(),join)))
-        , clazz);
+                iding(jointing(getCollection(collectionName).find(query).first(), join)))
+                , clazz);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
@@ -241,7 +239,7 @@ public class MongoKit {
 
     private static Document iding(Document document) {
         Assertions.notNull("document", document);
-        if (document.get("_id")!=null&&!document.get("_id").toString().isEmpty()) {
+        if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
             document.put("id", document.get("_id").toString());
             document.remove("_id");
         }
@@ -251,11 +249,15 @@ public class MongoKit {
     private static Document jointing(Document document, String join) {
         Assertions.notNull("join", join);
         if (!join.isEmpty()) {
-            DBRef dbRef = document.get(join, DBRef.class);
-            Document joinDoc = getCollection(dbRef.getCollectionName())
-                    .find(new Document("_id", dbRef.getId())).first();
-            joinDoc=iding(joinDoc);
-            document.put(join,joinDoc);
+            try {
+                DBRef dbRef = document.get(join, DBRef.class);
+                Document joinDoc = getCollection(dbRef.getCollectionName())
+                        .find(new Document("_id", dbRef.getId())).first();
+                joinDoc = iding(joinDoc);
+                document.put(join, joinDoc);
+            } catch (ClassCastException e) {
+
+            }
         }
         return document;
 

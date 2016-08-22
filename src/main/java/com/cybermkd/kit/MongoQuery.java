@@ -4,6 +4,7 @@ package com.cybermkd.kit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBRef;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
 public class MongoQuery {
 
     String collectionName;
+    String join;
     Document document = new Document();
     List<Document> documents = new ArrayList<Document>();
     List<Bson> query = new ArrayList<Bson>();
@@ -64,6 +66,28 @@ public class MongoQuery {
         return query.size() == 0 ? new BsonDocument() : Filters.nor((Iterable) query);
     }
 
+    public MongoQuery join(String key, String collectionName, List<String> ids) {
+        List<ObjectId> oids = new ArrayList<ObjectId>();
+        ids.forEach((final String id) -> {
+            oids.add(new ObjectId(id));
+        });
+        DBRef ref = new DBRef(collectionName, oids);
+        document.append(key, ref);
+        return this;
+    }
+
+
+    public MongoQuery join(String key, String collectionName, String id) {
+        DBRef ref = new DBRef(collectionName, new ObjectId(id));
+        document.append(key, ref);
+        return this;
+    }
+
+    public MongoQuery join(String key) {
+        this.join = key;
+        return this;
+    }
+    
     public Document getDocument() {
         return this.document;
     }
@@ -241,28 +265,28 @@ public class MongoQuery {
 
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit, skip, sort, projection);
+        return MongoKit.find(collectionName, limit, skip, sort, projection,join);
     }
 
     public <T> List findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit, skip, sort, projection, clazz);
+        return MongoKit.find(collectionName, limit, skip, sort, projection, join, clazz);
     }
 
 
     public JSONObject findOne() {
-        return MongoKit.findOne(collectionName, and(query));
+        return MongoKit.findOne(collectionName, and(query), join);
     }
 
     public <T> T findOne(Class<T> clazz) {
-        return MongoKit.findOne(collectionName, and(query), clazz);
+        return MongoKit.findOne(collectionName, and(query), join, clazz);
     }
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip);
+        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, clazz);
+        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
     }
 
     public MongoQuery ascending(String... fieldNames) {

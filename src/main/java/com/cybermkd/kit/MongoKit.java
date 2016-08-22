@@ -3,7 +3,9 @@ package com.cybermkd.kit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.Block;
+import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
+import com.mongodb.assertions.Assertions;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexModel;
@@ -58,27 +60,27 @@ public class MongoKit {
 
 
     public static List<JSONObject> find(String collectionName, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0);
+        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
     }
 
     public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "");
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
+    public static List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, join);
     }
 
-    public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, clazz);
+    public static <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "", clazz);
     }
 
-    public static <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, clazz);
+    public static <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join, clazz);
     }
 
     public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
-        return find(collectionName, query, projection, new BsonDocument(), 0, 0);
+        return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
     }
 
 
@@ -91,41 +93,47 @@ public class MongoKit {
     }
 
 
-    public static JSONObject findOne(String collectionName, Bson query) {
-        return (JSONObject) JSON.toJSON(getCollection(collectionName).find(query).first());
+    public static JSONObject findOne(String collectionName, Bson query, String join) {
+        return (JSONObject) JSON.toJSON(
+                iding(jointing(getCollection(collectionName).find(query).first(),join))
+        );
     }
 
-    public static <T> T findOne(String collectionName, Bson query, Class<T> clazz) {
-        return JSON.parseObject(JSON.toJSONString(getCollection(collectionName).find(query).first()), clazz);
+    public static <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
+        return JSON.parseObject(JSON.toJSONString(
+                iding(jointing(getCollection(collectionName).find(query).first(),join)))
+        , clazz);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
+    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
+                                        int skip, String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
-            public void apply(final Document document) {
-                document.put("id", document.get("_id").toString());
+            public void apply(Document document) {
+                document = iding(document);
+                document = jointing(document, join);
                 list.add((JSONObject) JSON.toJSON(document));
             }
         };
-
         getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
 
         return list;
 
     }
 
-    public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
-
+    public static <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
+                                   String join, Class<T> clazz) {
 
         final List list = new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 
-            public void apply(final Document document) {
-                document.put("id", document.get("_id").toString());
+            public void apply(Document document) {
+                document = iding(document);
+                document = jointing(document, join);
                 list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
             }
         };
@@ -229,6 +237,28 @@ public class MongoKit {
 
     public static void deleteIndex(String collectionName) {
         getCollection(collectionName).dropIndexes();
+    }
+
+    private static Document iding(Document document) {
+        Assertions.notNull("document", document);
+        if (document.get("_id")!=null&&!document.get("_id").toString().isEmpty()) {
+            document.put("id", document.get("_id").toString());
+            document.remove("_id");
+        }
+        return document;
+    }
+
+    private static Document jointing(Document document, String join) {
+        Assertions.notNull("join", join);
+        if (!join.isEmpty()) {
+            DBRef dbRef = document.get(join, DBRef.class);
+            Document joinDoc = getCollection(dbRef.getCollectionName())
+                    .find(new Document("_id", dbRef.getId())).first();
+            joinDoc=iding(joinDoc);
+            document.put(join,joinDoc);
+        }
+        return document;
+
     }
 
 

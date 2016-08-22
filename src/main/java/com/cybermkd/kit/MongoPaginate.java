@@ -52,7 +52,7 @@ public class MongoPaginate {
     }
 
     public MongoPage findAll() {
-        this.list = query.limit(count).skip(skip()).find();
+        this.list = query.limit(count).skip(skip()).findAll();
         return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
     }
 

@@ -87,7 +87,7 @@ public class MongoQuery {
         this.join = key;
         return this;
     }
-    
+
     public Document getDocument() {
         return this.document;
     }
@@ -265,7 +265,7 @@ public class MongoQuery {
 
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit, skip, sort, projection,join);
+        return MongoKit.find(collectionName, limit, skip, sort, projection, join);
     }
 
     public <T> List findAll(Class<T> clazz) {

@@ -247,8 +247,7 @@ public enum MongoKit {
     }
 
     private static Document jointing(Document document, String join) {
-        Assertions.notNull("join", join);
-        if (!join.isEmpty()) {
+        if (join!=null&&!join.isEmpty()) {
             try {
                 DBRef dbRef = document.get(join, DBRef.class);
                 Document joinDoc = getCollection(dbRef.getCollectionName())

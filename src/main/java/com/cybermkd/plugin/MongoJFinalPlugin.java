@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
 
-
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private MongoClient client;
@@ -22,7 +21,7 @@ public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
     @Override
     public boolean start() {
         client = getMongoClient();
-        MongoKit.init(client, getDatabase());
+        MongoKit.INSTANCE.init(client, getDatabase());
         return true;
     }
 
@@ -33,6 +32,4 @@ public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
         }
         return true;
     }
-
-
 }

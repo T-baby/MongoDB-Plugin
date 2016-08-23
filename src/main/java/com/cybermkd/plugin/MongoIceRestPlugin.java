@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 public class MongoIceRestPlugin extends MongoPlugin implements Plugin {
 
-
     final Logger logger = LoggerFactory.getLogger(MongoIceRestPlugin.class);
 
     private MongoClient client;
@@ -22,7 +21,7 @@ public class MongoIceRestPlugin extends MongoPlugin implements Plugin {
     @Override
     public boolean start() {
         client = getMongoClient();
-        MongoKit.init(client, getDatabase());
+        MongoKit.INSTANCE.init(client, getDatabase());
         return true;
     }
 
@@ -33,6 +32,4 @@ public class MongoIceRestPlugin extends MongoPlugin implements Plugin {
         }
         return true;
     }
-
-
 }

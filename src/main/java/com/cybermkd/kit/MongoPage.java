@@ -17,9 +17,7 @@ public class MongoPage {
     private boolean lastPage = false;
     private List list = new ArrayList();
 
-    public MongoPage(int count, int page, int totalPage, long totalRow, boolean firstPage,
-                     boolean lastPage, List result) {
-
+    public MongoPage(int count, int page, int totalPage, long totalRow, boolean firstPage, boolean lastPage, List result) {
         this.count = count;
         this.page = page;
         this.totalPage = totalPage;

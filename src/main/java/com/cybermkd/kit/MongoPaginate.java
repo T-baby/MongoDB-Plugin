@@ -19,7 +19,7 @@ public class MongoPaginate {
     private MongoQuery query;
     private boolean firstPage = false;
     private boolean lastPage = false;
-    private List<JSONObject> list = new ArrayList<JSONObject>();
+    private List<JSONObject> list = new ArrayList<>();
 
     public MongoPaginate(MongoQuery query, int count, int page) {
         this.query = query;
@@ -32,14 +32,12 @@ public class MongoPaginate {
         }
 
         if (count <= 0 || count > totalRow || page <= 0 || page > totalPage || page * count > totalRow) {
-            new RuntimeException("MongPage tips: (づ￣ 3￣)づ count or page is error !");
+            new RuntimeException("MongoPage tips: count or page is error !");
         }
 
         this.firstPage = this.page == 1;
         this.lastPage = this.page == this.totalPage;
-
     }
-
 
     public MongoPage find() {
         this.list = query.limit(count).skip(skip()).find();
@@ -72,6 +70,4 @@ public class MongoPaginate {
     public int count() {
         return (int) this.query.count();
     }
-
-
 }

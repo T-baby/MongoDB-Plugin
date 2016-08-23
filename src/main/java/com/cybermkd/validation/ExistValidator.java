@@ -21,38 +21,26 @@ public class ExistValidator implements ConstraintValidator<Exist, String> {
 
     @Override
     public void initialize(Exist exist) {
-
         value = exist.value();
-
         collectionName = exist.collectionName();
-
         key = exist.key();
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-
         if (value) {
             return exist(s);
         }
-
         return !exist(s);
-
     }
 
     private boolean exist(String s) {
-
         MongoQuery query = new MongoQuery().use(collectionName);
-
         if (key.equals("id") || key.equals("_id")) {
             query.byId(s);
         } else {
             query.eq(key, s);
         }
-
         return query.exist();
-
     }
-
-
 }

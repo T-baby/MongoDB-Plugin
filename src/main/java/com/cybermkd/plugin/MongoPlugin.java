@@ -44,19 +44,25 @@ public class MongoPlugin {
         return this.database;
     }
 
-    /*数据库授权*/
+    /**
+     * 数据库授权
+     */
     public MongoPlugin auth(MongoCredential mongoCredential) {
         this.authList.add(mongoCredential);
         return this;
     }
 
-    /*数据库授权*/
+    /**
+     * 数据库授权
+     */
     public MongoPlugin auth(String username, String password) {
         this.authList.add(MongoCredential.createCredential(username, this.database, password.toCharArray()));
         return this;
     }
 
-    /*SSL*/
+    /**
+     * 使用SSL连接
+     */
     public MongoPlugin ssl() {
         this.options.sslEnabled(true);
         return this;
@@ -67,23 +73,24 @@ public class MongoPlugin {
         return this;
     }
 
-    public MongoPlugin opition(MongoClientOptions.Builder opitions) {
-        this.options = opitions;
+    public MongoPlugin options(MongoClientOptions.Builder options) {
+        this.options = options;
         return this;
     }
 
-    /*自定义读写分离
-    * primary
-    * 主节点,默认模式,读操作只在主节点,如果主节点不可用,报错或者抛出异常。
-    * primaryPreferred
-    * 首选主节点,大多情况下读操作在主节点,如果主节点不可用,如故障转移,读操作在从节点。
-    * secondary
-    * 从节点,读操作只在从节点, 如果从节点不可用,报错或者抛出异常。
-    * secondaryPreferred
-    * 首选从节点,大多情况下读操作在从节点,特殊情况（如单主节点架构）读操作在主节点。
-    * nearest
-    * 最邻近节点,读操作在最邻近的成员,可能是主节点或者从节点,根据ping时间最短
-    * */
+    /**
+     * 自定义读写分离
+     * <p>
+     * primary: 主节点,默认模式,读操作只在主节点,如果主节点不可用,报错或者抛出异常。
+     * <p>
+     * primaryPreferred: 首选主节点,大多情况下读操作在主节点,如果主节点不可用,如故障转移,读操作在从节点。
+     * <p>
+     * secondary: 从节点,读操作只在从节点, 如果从节点不可用,报错或者抛出异常。
+     * <p>
+     * secondaryPreferred: 首选从节点,大多情况下读操作在从节点,特殊情况（如单主节点架构）读操作在主节点。
+     * <p>
+     * nearest: 最邻近节点,读操作在最邻近的成员,可能是主节点或者从节点,根据ping时间最短
+     */
     public MongoPlugin readPreference(ReadPreference readPreference) {
         this.options.readPreference(readPreference);
         return this;
@@ -93,7 +100,6 @@ public class MongoPlugin {
         this.options.readPreference(ReadPreference.secondaryPreferred());
         return this;
     }
-
 
     public MongoPlugin writeConcern(WriteConcern writeConcern) {
         this.options.writeConcern(writeConcern);
@@ -111,16 +117,11 @@ public class MongoPlugin {
         return this;
     }
 
-
     public MongoClient getMongoClient() {
-
         try {
             return new MongoClient(hostList, authList, options.build());
         } catch (Exception e) {
-            throw new RuntimeException("无法连接mongodb,请检查配置!Can't connect mongodb!");
+            throw new RuntimeException("无法连接mongodb,请检查配置!");
         }
-
     }
-
-
 }

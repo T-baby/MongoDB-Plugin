@@ -1,3 +1,6 @@
+package com.cybermkd;
+
+import com.alibaba.fastjson.annotation.JSONField;
 import com.cybermkd.constraints.Exist;
 import com.cybermkd.constraints.Inside;
 import com.cybermkd.constraints.Type;
@@ -7,27 +10,31 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.Size;
 
-/**
- * 创建人:T-baby
- * 创建日期: 16/7/5
- * 文件描述:
- */
 public class AccountBean extends MongoValidate{
-
 
     @Type(value = "int")
     private String id;
 
     @NotNull
-    @Inside(value = {"aaa","xxx"})
+    @Inside(value = {"mongo","db"})
     @Size(min = 3,max = 18)
     @Exist(value = false,collectionName = "item",key = "username")
     private String username;
+
     @SafeHtml
     private String password;
 
-    public String getPassword() {
-        return password;
+    private Integer age;
+
+    @JSONField(name = "create_at")
+    private Long createDate;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -38,16 +45,27 @@ public class AccountBean extends MongoValidate{
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-
-    public String getId() {
-        return id;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Long getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Long createDate) {
+        this.createDate = createDate;
     }
 }

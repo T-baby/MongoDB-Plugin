@@ -18,7 +18,7 @@ public class MongodbTest extends TestCase {
 //        plugin.add("127.0.0.1", 27017).setDatabase("test");
         plugin.add("192.168.1.206", 27017).setDatabase("test");
         MongoClient client = plugin.getMongoClient();
-        MongoKit.init(client, plugin.getDatabase());
+        MongoKit.INSTANCE.init(client, plugin.getDatabase());
     }
 
     @Override

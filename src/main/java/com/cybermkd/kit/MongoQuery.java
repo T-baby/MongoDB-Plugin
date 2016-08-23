@@ -271,14 +271,14 @@ public class MongoQuery {
     }
 
     public long save() {
-        long row = MongoKit.insert(collectionName, document);
+        long row = MongoKit.INSTANCE.insert(collectionName, document);
         this.id = this.document.getObjectId("_id").toString();
         document.clear();
         return row;
     }
 
     public long saveList() {
-        long row = MongoKit.insert(collectionName, documents);
+        long row = MongoKit.INSTANCE.insert(collectionName, documents);
         documents.clear();
         return row;
     }
@@ -307,27 +307,27 @@ public class MongoQuery {
      */
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit, skip, sort, projection, join);
+        return MongoKit.INSTANCE.find(collectionName, limit, skip, sort, projection, join);
     }
 
     public <T> List findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit, skip, sort, projection, join, clazz);
+        return MongoKit.INSTANCE.find(collectionName, limit, skip, sort, projection, join, clazz);
     }
 
     public JSONObject findOne() {
-        return MongoKit.findOne(collectionName, and(query), join);
+        return MongoKit.INSTANCE.findOne(collectionName, and(query), join);
     }
 
     public <T> T findOne(Class<T> clazz) {
-        return MongoKit.findOne(collectionName, and(query), join, clazz);
+        return MongoKit.INSTANCE.findOne(collectionName, and(query), join, clazz);
     }
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join);
+        return MongoKit.INSTANCE.find(collectionName, and(query), sort, projection, limit, skip, join);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
+        return MongoKit.INSTANCE.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
     }
 
     /**
@@ -353,7 +353,7 @@ public class MongoQuery {
     }
 
     public long count() {
-        return MongoKit.count(collectionName, and(query));
+        return MongoKit.INSTANCE.count(collectionName, and(query));
     }
 
     /**
@@ -372,18 +372,18 @@ public class MongoQuery {
     }
 
     public long update() {
-        return MongoKit.update(collectionName, and(query), Updates.combine(data));
+        return MongoKit.INSTANCE.update(collectionName, and(query), Updates.combine(data));
     }
 
     public long updateOne() {
-        return MongoKit.updateOne(collectionName, and(query), Updates.combine(data));
+        return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data));
     }
 
     public long delete() {
-        return MongoKit.delete(collectionName, and(query));
+        return MongoKit.INSTANCE.delete(collectionName, and(query));
     }
 
     public long deleteOne() {
-        return MongoKit.deleteOne(collectionName, and(query));
+        return MongoKit.INSTANCE.deleteOne(collectionName, and(query));
     }
 }

@@ -21,7 +21,7 @@ public class MongoIceRestPlugin extends MongoPlugin implements Plugin {
     @Override
     public boolean start() {
         client = getMongoClient();
-        MongoKit.init(client, getDatabase());
+        MongoKit.INSTANCE.init(client, getDatabase());
         return true;
     }
 

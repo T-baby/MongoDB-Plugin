@@ -25,19 +25,34 @@ import java.util.regex.Pattern;
  */
 public class MongoQuery {
 
-    String collectionName;
-    String join;
-    Document document = new Document();
-    List<Document> documents = new ArrayList<Document>();
-    List<Bson> query = new ArrayList<Bson>();
-    List<Bson> data = new ArrayList<Bson>();
-    Bson sort;
-    Bson projection;
+    private String collectionName;
+    private String join;
+    private Document document = new Document();
+    private List<Document> documents = new ArrayList<Document>();
+    private List<Bson> query = new ArrayList<Bson>();
+    private List<Bson> data = new ArrayList<Bson>();
+    private Bson sort;
+    private Bson projection;
     /*用于记录单挑插入时的id*/
-    String id;
-    int limit = 0;
-    int skip = 0;
+    private String id;
+    private int limit = 0;
+    private int skip = 0;
 
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public int getSkip() {
+        return skip;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public Bson getSort() {
+        return sort;
+    }
 
     public MongoQuery use(String name) {
         this.collectionName = name;
@@ -65,17 +80,6 @@ public class MongoQuery {
     public static Bson nor(List<Bson> query) {
         return query.size() == 0 ? new BsonDocument() : Filters.nor((Iterable) query);
     }
-
-    public MongoQuery join(String key, String collectionName, List<String> ids) {
-        List<ObjectId> oids = new ArrayList<ObjectId>();
-        ids.forEach((final String id) -> {
-            oids.add(new ObjectId(id));
-        });
-        DBRef ref = new DBRef(collectionName, oids);
-        document.append(key, ref);
-        return this;
-    }
-
 
     public MongoQuery join(String key, String collectionName, String id) {
         DBRef ref = new DBRef(collectionName, new ObjectId(id));
@@ -303,12 +307,32 @@ public class MongoQuery {
         return MongoKit.count(collectionName, and(query));
     }
 
+    public JSONObject max(String fieldName) {
+        ascending(fieldName);
+        return findOne();
+    }
+
+    public <T> T max(String fieldName, Class<T> clazz) {
+        ascending(fieldName);
+        return findOne(clazz);
+    }
+
+    public JSONObject min(String fieldName) {
+        descending(fieldName);
+        return findOne();
+    }
+
+    public <T> T min(String fieldName, Class<T> clazz) {
+        descending(fieldName);
+        return findOne(clazz);
+    }
+
+
     /*存在某个key*/
     public MongoQuery exist(String key) {
         set(Filters.exists(key));
         return this;
     }
-
 
     /*判断某个值是否存在*/
     public boolean exist() {

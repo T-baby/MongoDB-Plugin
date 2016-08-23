@@ -56,6 +56,39 @@ public enum MongoKit {
         return getCollection(collectionName).count() - before;
     }
 
+    public static List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
+
+        final List<JSONObject> list = new ArrayList<JSONObject>();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(Document document) {
+                document = iding(document);
+                list.add((JSONObject) JSON.toJSON(document));
+            }
+        };
+
+        getCollection(collectionName).aggregate(query).allowDiskUse(allowDiskUse).forEach(block);
+
+        return list;
+    }
+
+    public static <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, Class<T> clazz) {
+
+        final List list = new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(Document document) {
+                document = iding(document);
+                list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
+            }
+        };
+
+        getCollection(collectionName).aggregate(query).allowDiskUse(allowDiskUse).forEach(block);
+
+        return list;
+    }
 
     public static List<JSONObject> find(String collectionName, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
@@ -239,15 +272,19 @@ public enum MongoKit {
 
     private static Document iding(Document document) {
         Assertions.notNull("document", document);
-        if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
-            document.put("id", document.get("_id").toString());
-            document.remove("_id");
+        try {
+            if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
+                document.put("id", document.get("_id").toString());
+                document.remove("_id");
+            }
+        } catch (ClassCastException e) {
+                /*如果转换出错直接返回原本的值,不做任何处理*/
         }
         return document;
     }
 
     private static Document jointing(Document document, String join) {
-        if (join!=null&&!join.isEmpty()) {
+        if (join != null && !join.isEmpty()) {
             try {
                 DBRef dbRef = document.get(join, DBRef.class);
                 Document joinDoc = getCollection(dbRef.getCollectionName())
@@ -255,7 +292,7 @@ public enum MongoKit {
                 joinDoc = iding(joinDoc);
                 document.put(join, joinDoc);
             } catch (ClassCastException e) {
-
+                /*用于避免如果key对应的值并不是DBRef,如果转换出错直接返回原本的值,不做任何处理*/
             }
         }
         return document;

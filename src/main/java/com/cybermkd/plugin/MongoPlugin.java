@@ -118,11 +118,11 @@ public class MongoPlugin {
         return this;
     }
 
-    public MongoClient getMongoClient() throws Exception {
+    public MongoClient getMongoClient() {
         try {
             return new MongoClient(hostList, authList, options.build());
         } catch (Exception e) {
-            throw new UnknownHostException("无法连接mongodb,请检查配置!");
+            throw new RuntimeException("无法连接mongodb,请检查配置!");
         }
     }
 }

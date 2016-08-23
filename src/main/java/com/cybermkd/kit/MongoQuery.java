@@ -69,10 +69,8 @@ public class MongoQuery {
     }
 
     public MongoQuery join(String key, String collectionName, List<String> ids) {
-        List<ObjectId> oids = new ArrayList<ObjectId>();
-        ids.forEach((final String id) -> {
-            oids.add(new ObjectId(id));
-        });
+        List<ObjectId> oids = new ArrayList<>();
+        ids.forEach((final String id) -> oids.add(new ObjectId(id)));
         DBRef ref = new DBRef(collectionName, oids);
         document.append(key, ref);
         return this;
@@ -179,7 +177,6 @@ public class MongoQuery {
         } else {
             query.add(Filters.in(key, values));
         }
-
         return this;
     }
 

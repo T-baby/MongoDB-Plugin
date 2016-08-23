@@ -34,9 +34,9 @@ import java.util.*;
 public enum MongoKit {
     INSTANCE;
 
-    private static MongoClient client;
-    private static MongoDatabase defaultDb;
-    private static Validator validator;
+    protected static MongoClient client;
+    protected static MongoDatabase defaultDb;
+    protected static Validator validator;
 
     public static void init(MongoClient client, String database) {
         MongoKit.client = client;

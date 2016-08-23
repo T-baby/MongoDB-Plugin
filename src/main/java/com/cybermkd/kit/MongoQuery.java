@@ -25,21 +25,21 @@ import java.util.regex.Pattern;
  */
 public class MongoQuery {
 
-    String collectionName;
-    String join;
-    Document document = new Document();
-    List<Document> documents = new ArrayList<>();
-    List<Bson> query = new ArrayList<>();
-    List<Bson> data = new ArrayList<>();
-    Bson sort;
-    Bson projection;
+    protected String collectionName;
+    protected String join;
+    protected Document document = new Document();
+    protected List<Document> documents = new ArrayList<>();
+    protected List<Bson> query = new ArrayList<>();
+    protected List<Bson> data = new ArrayList<>();
+    protected Bson sort;
+    protected Bson projection;
 
     /**
      * 用于记录单挑插入时的id
      */
-    String id;
-    int limit = 0;
-    int skip = 0;
+    protected String id;
+    protected int limit = 0;
+    protected int skip = 0;
 
     public MongoQuery use(String name) {
         this.collectionName = name;
@@ -299,6 +299,12 @@ public class MongoQuery {
         this.skip = i;
         return this;
     }
+
+    /**
+     * 以下为MongoDB数据操作
+     *
+     * @return
+     */
 
     public List<JSONObject> findAll() {
         return MongoKit.find(collectionName, limit, skip, sort, projection, join);

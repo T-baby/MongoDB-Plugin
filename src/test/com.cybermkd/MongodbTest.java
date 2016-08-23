@@ -2,11 +2,9 @@ package com.cybermkd;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cybermkd.kit.MongoIndex;
-import com.cybermkd.kit.MongoPage;
-import com.cybermkd.kit.MongoPaginate;
-import com.cybermkd.kit.MongoQuery;
-import com.cybermkd.plugin.MongoIceRestPlugin;
+import com.cybermkd.kit.*;
+import com.cybermkd.plugin.MongoPlugin;
+import com.mongodb.MongoClient;
 import junit.framework.TestCase;
 
 /**
@@ -18,10 +16,10 @@ public class MongodbTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        MongoIceRestPlugin iceRestPlugin = new MongoIceRestPlugin();
-        iceRestPlugin.add("127.0.0.1", 27017);
-        iceRestPlugin.setDatabase("test");
-        iceRestPlugin.start();
+        MongoPlugin plugin = new MongoPlugin();
+        plugin.add("127.0.0.1", 27017).setDatabase("test");
+        MongoClient client = plugin.getMongoClient();
+        MongoKit.init(client, plugin.getDatabase());
     }
 
     @Override

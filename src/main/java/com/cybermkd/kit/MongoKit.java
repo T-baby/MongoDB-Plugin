@@ -28,7 +28,8 @@ import java.util.*;
  */
 
 /**
- * 采用枚举实现单例模式
+ * 枚举实现单例模式 16/08/23
+ * gumutianqi@gmail.com
  */
 public enum MongoKit {
     INSTANCE;

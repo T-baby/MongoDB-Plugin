@@ -1,3 +1,5 @@
+package com.cybermkd;
+
 import com.cybermkd.constraints.Exist;
 import com.cybermkd.constraints.Inside;
 import com.cybermkd.constraints.Type;
@@ -14,7 +16,6 @@ import javax.validation.constraints.Size;
  */
 public class AccountBean extends MongoValidate{
 
-
     @Type(value = "int")
     private String id;
 
@@ -23,6 +24,7 @@ public class AccountBean extends MongoValidate{
     @Size(min = 3,max = 18)
     @Exist(value = false,collectionName = "item",key = "username")
     private String username;
+
     @SafeHtml
     private String password;
 
@@ -41,7 +43,6 @@ public class AccountBean extends MongoValidate{
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     public String getId() {
         return id;

@@ -16,7 +16,7 @@ public class AccountBean extends MongoValidate{
     private String id;
 
     @NotNull
-    @Inside(value = {"aaa","xxx"})
+    @Inside(value = {"mongo","db"})
     @Size(min = 3,max = 18)
     @Exist(value = false,collectionName = "item",key = "username")
     private String username;

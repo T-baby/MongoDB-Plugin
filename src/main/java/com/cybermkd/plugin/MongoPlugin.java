@@ -4,6 +4,7 @@ import com.mongodb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +74,8 @@ public class MongoPlugin {
         return this;
     }
 
-    public MongoPlugin opition(MongoClientOptions.Builder opitions) {
-        this.options = opitions;
+    public MongoPlugin options(MongoClientOptions.Builder options) {
+        this.options = options;
         return this;
     }
 
@@ -117,11 +118,11 @@ public class MongoPlugin {
         return this;
     }
 
-    public MongoClient getMongoClient() {
+    public MongoClient getMongoClient() throws Exception {
         try {
             return new MongoClient(hostList, authList, options.build());
         } catch (Exception e) {
-            throw new RuntimeException("无法连接mongodb,请检查配置!");
+            throw new UnknownHostException("无法连接mongodb,请检查配置!");
         }
     }
 }

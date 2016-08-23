@@ -26,9 +26,12 @@ import java.util.*;
  * 创建日期: 16/4/15
  * 文件描述:MongoDB操作工具类
  */
-public enum MongoKit {
 
-    INSTANS;/*唯一实例*/
+/**
+ * 采用枚举实现单例模式
+ */
+public enum MongoKit {
+    INSTANCE;
 
     private static MongoClient client;
     private static MongoDatabase defaultDb;
@@ -49,13 +52,11 @@ public enum MongoKit {
         return getCollection(collectionName).count() - before;
     }
 
-
     public static long insert(String collectionName, Document doc) {
         long before = getCollection(collectionName).count();
         getCollection(collectionName).insertOne(doc);
         return getCollection(collectionName).count() - before;
     }
-
 
     public static List<JSONObject> find(String collectionName, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
@@ -81,7 +82,6 @@ public enum MongoKit {
         return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
     }
 
-
     public static long count(String collectionName, Bson query) {
         return getCollection(collectionName).count(query);
     }
@@ -93,55 +93,41 @@ public enum MongoKit {
 
     public static JSONObject findOne(String collectionName, Bson query, String join) {
         return (JSONObject) JSON.toJSON(
-                iding(jointing(getCollection(collectionName).find(query).first(), join))
+                idIng(joinTing(getCollection(collectionName).find(query).first(), join))
         );
     }
 
     public static <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
         return JSON.parseObject(JSON.toJSONString(
-                iding(jointing(getCollection(collectionName).find(query).first(), join)))
+                idIng(joinTing(getCollection(collectionName).find(query).first(), join)))
                 , clazz);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
-                                        int skip, String join) {
-
+    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, String join) {
         final List<JSONObject> list = new ArrayList<JSONObject>();
-
         Block<Document> block = new Block<Document>() {
-
             public void apply(Document document) {
-                document = iding(document);
-                document = jointing(document, join);
+                document = idIng(document);
+                document = joinTing(document, join);
                 list.add((JSONObject) JSON.toJSON(document));
             }
         };
         getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
-
         return list;
-
     }
 
-    public static <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
-                                   String join, Class<T> clazz) {
-
+    public static <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, String join, Class<T> clazz) {
         final List list = new ArrayList();
-
         Block<Document> block = new Block<Document>() {
-
             public void apply(Document document) {
-                document = iding(document);
-                document = jointing(document, join);
+                document = idIng(document);
+                document = joinTing(document, join);
                 list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
             }
         };
-
         getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
-
         return list;
-
     }
-
 
     public static long update(String collectionName, Bson queue, Bson data) {
         UpdateResult updateResult = getCollection(collectionName).updateMany(queue, data);
@@ -152,7 +138,6 @@ public enum MongoKit {
         UpdateResult updateResult = getCollection(collectionName).updateOne(queue, data);
         return updateResult.getModifiedCount();
     }
-
 
     public static long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
@@ -165,41 +150,26 @@ public enum MongoKit {
     }
 
     public static String validation(Object obj) {
-
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-        Validator validator = Validation.buildDefaultValidatorFactory()
-                .getValidator();
-
-        Set<ConstraintViolation<Object>> constraintViolations = validator
-                .validate(obj);//验证某个对象,其实也可以只验证其中的某一个属性的
-
+        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(obj);//验证某个对象,其实也可以只验证其中的某一个属性的
         constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
-
         return buffer.toString();
     }
 
     //校验单个属性
     public static String validation(Object obj, String[] keys) {
-
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
-
-        Validator validator = Validation.buildDefaultValidatorFactory()
-                .getValidator();
-
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
-
         for (String key : keys) {
             Iterator<ConstraintViolation<Object>> it = validator.validateProperty(obj, key).iterator();
             if (it.hasNext()) {
                 constraintViolations.add(it.next());
             }
-
         }
-
-
         constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
-
         return buffer.toString();
     }
 
@@ -212,57 +182,46 @@ public enum MongoKit {
     }
 
     public static List<JSONObject> getIndex(String collectionName) {
-
         List list = new ArrayList();
-
         Block<Document> block = new Block<Document>() {
-
             public void apply(final Document document) {
                 list.add(JSON.parseObject(document.toJson()));
             }
         };
-
         getCollection(collectionName).listIndexes().forEach(block);
-
         return list;
     }
 
     public static void deleteIndex(String collectionName, Bson bson) {
-
         getCollection(collectionName).dropIndex(bson);
-
     }
 
     public static void deleteIndex(String collectionName) {
         getCollection(collectionName).dropIndexes();
     }
 
-    private static Document iding(Document document) {
+    private static Document idIng(Document document) {
         Assertions.notNull("document", document);
-        if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
+        if (document.getObjectId("_id") != null && !document.getObjectId("_id").toString().isEmpty()) {
             document.put("id", document.get("_id").toString());
             document.remove("_id");
         }
         return document;
     }
 
-    private static Document jointing(Document document, String join) {
-        if (join!=null&&!join.isEmpty()) {
+    private static Document joinTing(Document document, String join) {
+        if (join != null && !join.isEmpty()) {
             try {
                 DBRef dbRef = document.get(join, DBRef.class);
-                Document joinDoc = getCollection(dbRef.getCollectionName())
-                        .find(new Document("_id", dbRef.getId())).first();
-                joinDoc = iding(joinDoc);
+                Document joinDoc = getCollection(dbRef.getCollectionName()).find(new Document("_id", dbRef.getId())).first();
+                joinDoc = idIng(joinDoc);
                 document.put(join, joinDoc);
             } catch (ClassCastException e) {
 
             }
         }
         return document;
-
     }
-
-
 }
 
 

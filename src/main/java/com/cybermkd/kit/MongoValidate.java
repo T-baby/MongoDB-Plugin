@@ -7,7 +7,6 @@ package com.cybermkd.kit;
  */
 public class MongoValidate {
 
-
     String validateErrorMessage = "";
 
     public boolean validation() {

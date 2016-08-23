@@ -32,7 +32,9 @@ public class MongoIndex extends IndexOptions {
         return this.bson;
     }
 
-    /*普通索引*/
+    /**
+     * 普通索引
+     */
     public MongoIndex ascending(String... keys) {
         this.bson = Indexes.ascending(keys);
         return this;
@@ -47,7 +49,6 @@ public class MongoIndex extends IndexOptions {
         this.bson = Indexes.geo2dsphere(keys);
         return this;
     }
-
 
     public MongoIndex geo2d(String key) {
         this.bson = Indexes.geo2d(key);
@@ -85,28 +86,39 @@ public class MongoIndex extends IndexOptions {
         MongoKit.deleteIndex(collectionName);
     }
 
-    /*组合索引*/
+    /**
+     * 组合索引
+     */
     public MongoIndex add(MongoIndex mongoIndex) {
         indexModels.add(new IndexModel(Indexes.compoundIndex(mongoIndex.getBson()), mongoIndex));
         return this;
     }
 
+    /**
+     * 提交索引信息
+     */
     public List<String> compound() {
         return MongoKit.setIndex(collectionName, indexModels);
     }
 
-    /*设置*/
+    /**
+     * 唯一索引
+     */
     public MongoIndex setUnique(boolean unique) {
         unique(unique);
         return this;
     }
 
-
+    /**
+     * 是否后台执行索引,默认为false,会阻塞当前其他操作
+     *
+     * @param background false/true, 默认为false
+     * @return
+     */
     public MongoIndex setBackground(boolean background) {
         background(background);
         return this;
     }
-
 
     public MongoIndex setSparse(boolean sparse) {
         sparse(sparse);

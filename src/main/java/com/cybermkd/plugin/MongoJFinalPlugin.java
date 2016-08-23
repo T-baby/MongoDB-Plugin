@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
 
-
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private MongoClient client;
@@ -33,6 +32,4 @@ public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
         }
         return true;
     }
-
-
 }

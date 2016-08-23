@@ -33,11 +33,13 @@ public class MongoQuery {
     List<Bson> data = new ArrayList<Bson>();
     Bson sort;
     Bson projection;
-    /*用于记录单挑插入时的id*/
+
+    /**
+     * 用于记录单挑插入时的id
+     */
     String id;
     int limit = 0;
     int skip = 0;
-
 
     public MongoQuery use(String name) {
         this.collectionName = name;
@@ -76,7 +78,6 @@ public class MongoQuery {
         return this;
     }
 
-
     public MongoQuery join(String key, String collectionName, String id) {
         DBRef ref = new DBRef(collectionName, new ObjectId(id));
         document.append(key, ref);
@@ -113,7 +114,12 @@ public class MongoQuery {
         return this;
     }
 
-    /*支持java bean*/
+    /**
+     * 支持java bean
+     *
+     * @param obj
+     * @return
+     */
     public MongoQuery set(Object obj) {
         document = Document.parse(JSON.toJSONString(obj));
         return this;
@@ -124,7 +130,12 @@ public class MongoQuery {
         return this;
     }
 
-    /*用于支持更多原生方法*/
+    /**
+     * 用于支持更多原生方法
+     *
+     * @param bson
+     * @return
+     */
     public MongoQuery add(Bson bson) {
         data.add(bson);
         return this;
@@ -145,7 +156,13 @@ public class MongoQuery {
         return this;
     }
 
-    //支持查询id
+    /**
+     * 支持查询id
+     *
+     * @param key
+     * @param values
+     * @return
+     */
     public MongoQuery in(String key, List values) {
         if ("_id".equals(key)) {
             List<ObjectId> idList = new ArrayList<ObjectId>();
@@ -160,27 +177,41 @@ public class MongoQuery {
         return this;
     }
 
-
+    /**
+     * 大于 >
+     */
     public MongoQuery gt(String key, Object value) {
         query.add(Filters.gt(key, value));
         return this;
     }
 
+    /**
+     * 小于 <
+     */
     public MongoQuery lt(String key, Object value) {
         query.add(Filters.lt(key, value));
         return this;
     }
 
+    /**
+     * 大于等于 >=
+     */
     public MongoQuery gte(String key, Object value) {
         query.add(Filters.gte(key, value));
         return this;
     }
 
+    /**
+     * 小于等于 <=
+     */
     public MongoQuery lte(String key, Object value) {
         query.add(Filters.lte(key, value));
         return this;
     }
 
+    /**
+     * 更新属性,若key不存在,则新建属性
+     */
     public MongoQuery modify(String key, MongoQuery query) {
         this.modify(key, query.getDocument());
         return this;
@@ -206,16 +237,21 @@ public class MongoQuery {
         return this;
     }
 
-
     public MongoQuery like(String key, String value) {
         Pattern pattern = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
         query.add(Filters.regex(key, pattern));
         return this;
     }
 
-    //1为以什么开头,2为以什么结尾
+    /**
+     * 模糊条件查询
+     *
+     * @param type: 1-以什么开头,2-以什么结尾
+     * @param key
+     * @param value
+     * @return
+     */
     public MongoQuery like(int type, String key, String value) {
-
         if (type == 1) {
             Pattern pattern = Pattern.compile("^" + value + ".*$", Pattern.CASE_INSENSITIVE);
             query.add(Filters.regex(key, pattern));
@@ -244,14 +280,12 @@ public class MongoQuery {
         return row;
     }
 
-
     public MongoQuery projection(String... keys) {
         for (String key : keys) {
             this.projection = new BasicDBObject().append(key, 1);
         }
         return this;
     }
-
 
     public MongoQuery limit(int i) {
         this.limit = i;
@@ -263,7 +297,6 @@ public class MongoQuery {
         return this;
     }
 
-
     public List<JSONObject> findAll() {
         return MongoKit.find(collectionName, limit, skip, sort, projection, join);
     }
@@ -271,7 +304,6 @@ public class MongoQuery {
     public <T> List findAll(Class<T> clazz) {
         return MongoKit.find(collectionName, limit, skip, sort, projection, join, clazz);
     }
-
 
     public JSONObject findOne() {
         return MongoKit.findOne(collectionName, and(query), join);
@@ -289,11 +321,23 @@ public class MongoQuery {
         return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
     }
 
+    /**
+     * 升序排序
+     *
+     * @param fieldNames
+     * @return
+     */
     public MongoQuery ascending(String... fieldNames) {
         this.sort = Sorts.ascending(Arrays.asList(fieldNames));
         return this;
     }
 
+    /**
+     * 降序排序
+     *
+     * @param fieldNames
+     * @return
+     */
     public MongoQuery descending(String... fieldNames) {
         this.sort = Sorts.descending(Arrays.asList(fieldNames));
         return this;
@@ -303,14 +347,17 @@ public class MongoQuery {
         return MongoKit.count(collectionName, and(query));
     }
 
-    /*存在某个key*/
+    /**
+     * 判断key是否存在
+     */
     public MongoQuery exist(String key) {
         set(Filters.exists(key));
         return this;
     }
 
-
-    /*判断某个值是否存在*/
+    /**
+     * 判断某个值是否存在
+     */
     public boolean exist() {
         return this.count() > 0;
     }
@@ -330,6 +377,4 @@ public class MongoQuery {
     public long deleteOne() {
         return MongoKit.deleteOne(collectionName, and(query));
     }
-
-
 }

@@ -28,9 +28,9 @@ public class MongoQuery {
     String collectionName;
     String join;
     Document document = new Document();
-    List<Document> documents = new ArrayList<Document>();
-    List<Bson> query = new ArrayList<Bson>();
-    List<Bson> data = new ArrayList<Bson>();
+    List<Document> documents = new ArrayList<>();
+    List<Bson> query = new ArrayList<>();
+    List<Bson> data = new ArrayList<>();
     Bson sort;
     Bson projection;
 
@@ -146,18 +146,24 @@ public class MongoQuery {
         return this;
     }
 
+    /**
+     * 等于
+     */
     public MongoQuery eq(String key, Object value) {
         query.add(Filters.eq(key, value));
         return this;
     }
 
+    /**
+     * 不等于
+     */
     public MongoQuery ne(String key, Object value) {
         query.add(Filters.ne(key, value));
         return this;
     }
 
     /**
-     * 支持查询id
+     * 包含条件,支持查询id
      *
      * @param key
      * @param values

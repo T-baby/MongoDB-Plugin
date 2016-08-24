@@ -7,6 +7,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.Updates;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -149,6 +150,48 @@ public class MongoQuery {
         return this;
     }
 
+    public MongoQuery regex(String key, String regex) {
+        query.add(Filters.regex(key, regex));
+        return this;
+    }
+
+    public MongoQuery type(String key, String type) {
+        query.add(Filters.type(key, type));
+        return this;
+    }
+
+
+    public MongoQuery mod(String key, long divisor, long remainder) {
+        query.add(Filters.mod(key, divisor, remainder));
+        return this;
+    }
+
+
+    public MongoQuery text(String search) {
+        query.add(Filters.text(search));
+        return this;
+    }
+
+    public MongoQuery  text(String search, TextSearchOptions textSearchOptions) {
+        query.add(Filters.text(search,textSearchOptions));
+        return this;
+    }
+
+    public MongoQuery where(String javaScriptExpression) {
+        query.add(Filters.where(javaScriptExpression));
+        return this;
+    }
+
+    public MongoQuery elemMatch(String key,MongoQuery query) {
+        this.query.add(Filters.elemMatch(key,this.and(query.getQuery())));
+        return this;
+    }
+
+    public MongoQuery size(String key, int size) {
+        query.add(Filters.size(key,size));
+        return this;
+    }
+
     //支持查询id
     public MongoQuery in(String key, List values) {
         if ("_id".equals(key)) {
@@ -236,14 +279,14 @@ public class MongoQuery {
     }
 
     public long save() {
-        long row = MongoKit.insert(collectionName, document);
+        long row = MongoKit.INSTANS.insert(collectionName, document);
         this.id = this.document.getObjectId("_id").toString();
         document.clear();
         return row;
     }
 
     public long saveList() {
-        long row = MongoKit.insert(collectionName, documents);
+        long row = MongoKit.INSTANS.insert(collectionName, documents);
         documents.clear();
         return row;
     }
@@ -269,61 +312,61 @@ public class MongoQuery {
 
 
     public List<JSONObject> findAll() {
-        return MongoKit.find(collectionName, limit, skip, sort, projection, join);
+        return MongoKit.INSTANS.find(collectionName, limit, skip, sort, projection, join);
     }
 
     public <T> List findAll(Class<T> clazz) {
-        return MongoKit.find(collectionName, limit, skip, sort, projection, join, clazz);
+        return MongoKit.INSTANS.find(collectionName, limit, skip, sort, projection, join, clazz);
     }
 
 
     public JSONObject findOne() {
-        return MongoKit.findOne(collectionName, and(query), join);
+        return MongoKit.INSTANS.findOne(collectionName, and(query), join);
     }
 
     public <T> T findOne(Class<T> clazz) {
-        return MongoKit.findOne(collectionName, and(query), join, clazz);
+        return MongoKit.INSTANS.findOne(collectionName, and(query), join, clazz);
     }
 
     public List<JSONObject> find() {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join);
+        return MongoKit.INSTANS.find(collectionName, and(query), sort, projection, limit, skip, join);
     }
 
     public <T> List find(Class<T> clazz) {
-        return MongoKit.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
+        return MongoKit.INSTANS.find(collectionName, and(query), sort, projection, limit, skip, join, clazz);
     }
 
-    public MongoQuery ascending(String... fieldNames) {
-        this.sort = Sorts.ascending(Arrays.asList(fieldNames));
+    public MongoQuery ascending(String... keys) {
+        this.sort = Sorts.ascending(Arrays.asList(keys));
         return this;
     }
 
-    public MongoQuery descending(String... fieldNames) {
-        this.sort = Sorts.descending(Arrays.asList(fieldNames));
+    public MongoQuery descending(String... keys) {
+        this.sort = Sorts.descending(Arrays.asList(keys));
         return this;
     }
 
     public long count() {
-        return MongoKit.count(collectionName, and(query));
+        return MongoKit.INSTANS.count(collectionName, and(query));
     }
 
-    public JSONObject max(String fieldName) {
-        ascending(fieldName);
+    public JSONObject max(String key) {
+        ascending(key);
         return findOne();
     }
 
-    public <T> T max(String fieldName, Class<T> clazz) {
-        ascending(fieldName);
+    public <T> T max(String key, Class<T> clazz) {
+        ascending(key);
         return findOne(clazz);
     }
 
-    public JSONObject min(String fieldName) {
-        descending(fieldName);
+    public JSONObject min(String key) {
+        descending(key);
         return findOne();
     }
 
-    public <T> T min(String fieldName, Class<T> clazz) {
-        descending(fieldName);
+    public <T> T min(String key, Class<T> clazz) {
+        descending(key);
         return findOne(clazz);
     }
 
@@ -340,19 +383,19 @@ public class MongoQuery {
     }
 
     public long update() {
-        return MongoKit.update(collectionName, and(query), Updates.combine(data));
+        return MongoKit.INSTANS.update(collectionName, and(query), Updates.combine(data));
     }
 
     public long updateOne() {
-        return MongoKit.updateOne(collectionName, and(query), Updates.combine(data));
+        return MongoKit.INSTANS.updateOne(collectionName, and(query), Updates.combine(data));
     }
 
     public long delete() {
-        return MongoKit.delete(collectionName, and(query));
+        return MongoKit.INSTANS.delete(collectionName, and(query));
     }
 
     public long deleteOne() {
-        return MongoKit.deleteOne(collectionName, and(query));
+        return MongoKit.INSTANS.deleteOne(collectionName, and(query));
     }
 
 

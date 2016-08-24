@@ -1,7 +1,10 @@
 package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.client.model.*;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.UnwindOptions;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
@@ -45,6 +48,11 @@ public class MongoAggregation {
 
     public MongoAggregation match() {
         pipeline.add(Aggregates.match(Filters.and(query.getQuery())));
+        return this;
+    }
+
+    public MongoAggregation projection(){
+        pipeline.add(Aggregates.project(Projections.fields(projections)));
         return this;
     }
 
@@ -104,11 +112,11 @@ public class MongoAggregation {
     }
 
     public List<JSONObject> aggregate() {
-        return MongoKit.aggregate(query.getCollectionName(), pipeline, allowDiskUse);
+        return MongoKit.INSTANS.aggregate(query.getCollectionName(), pipeline, allowDiskUse);
     }
 
     public <T> List aggregate(Class<T> clazz) {
-        return MongoKit.aggregate(query.getCollectionName(), pipeline, allowDiskUse, clazz);
+        return MongoKit.INSTANS.aggregate(query.getCollectionName(), pipeline, allowDiskUse, clazz);
     }
 
 

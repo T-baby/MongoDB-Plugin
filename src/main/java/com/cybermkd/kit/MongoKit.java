@@ -28,35 +28,40 @@ import java.util.*;
  */
 public enum MongoKit {
 
-    INSTANS;/*唯一实例*/
-
+    /*
+    *枚举实现单例模式
+    */
+    INSTANS;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
-    private static Validator validator;
 
-    public static void init(MongoClient client, String database) {
+    public MongoClient getClient() {
+        return client;
+    }
+
+    public void init(MongoClient client, String database) {
         MongoKit.client = client;
         MongoKit.defaultDb = client.getDatabase(database);
     }
 
-    public static MongoCollection<Document> getCollection(String collectionName) {
+    public MongoCollection<Document> getCollection(String collectionName) {
         return defaultDb.getCollection(collectionName);
     }
 
-    public static long insert(String collectionName, List<Document> docs) {
+    public long insert(String collectionName, List<Document> docs) {
         long before = getCollection(collectionName).count();
         getCollection(collectionName).insertMany(docs);
         return getCollection(collectionName).count() - before;
     }
 
 
-    public static long insert(String collectionName, Document doc) {
+    public long insert(String collectionName, Document doc) {
         long before = getCollection(collectionName).count();
         getCollection(collectionName).insertOne(doc);
         return getCollection(collectionName).count() - before;
     }
 
-    public static List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
+    public List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
@@ -73,7 +78,7 @@ public enum MongoKit {
         return list;
     }
 
-    public static <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, Class<T> clazz) {
+    public <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, Class<T> clazz) {
 
         final List list = new ArrayList();
 
@@ -90,53 +95,53 @@ public enum MongoKit {
         return list;
     }
 
-    public static List<JSONObject> find(String collectionName, Bson projection) {
+    public List<JSONObject> find(String collectionName, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
+    public List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "");
     }
 
-    public static List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
+    public List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0, join);
     }
 
-    public static <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
+    public <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "", clazz);
     }
 
-    public static <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join, Class<T> clazz) {
+    public <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join, Class<T> clazz) {
         return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join, clazz);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
+    public List<JSONObject> find(String collectionName, Bson query, Bson projection) {
         return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
     }
 
 
-    public static long count(String collectionName, Bson query) {
+    public long count(String collectionName, Bson query) {
         return getCollection(collectionName).count(query);
     }
 
-    public static long count(String collectionName) {
+    public long count(String collectionName) {
         return getCollection(collectionName).count();
     }
 
 
-    public static JSONObject findOne(String collectionName, Bson query, String join) {
+    public JSONObject findOne(String collectionName, Bson query, String join) {
         return (JSONObject) JSON.toJSON(
                 iding(jointing(getCollection(collectionName).find(query).first(), join))
         );
     }
 
-    public static <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
+    public <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
         return JSON.parseObject(JSON.toJSONString(
                 iding(jointing(getCollection(collectionName).find(query).first(), join)))
                 , clazz);
     }
 
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
+    public List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
                                         int skip, String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -155,7 +160,7 @@ public enum MongoKit {
 
     }
 
-    public static <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
+    public <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
                                    String join, Class<T> clazz) {
 
         final List list = new ArrayList();
@@ -176,28 +181,28 @@ public enum MongoKit {
     }
 
 
-    public static long update(String collectionName, Bson queue, Bson data) {
+    public long update(String collectionName, Bson queue, Bson data) {
         UpdateResult updateResult = getCollection(collectionName).updateMany(queue, data);
         return updateResult.getModifiedCount();
     }
 
-    public static long updateOne(String collectionName, Bson queue, Bson data) {
+    public long updateOne(String collectionName, Bson queue, Bson data) {
         UpdateResult updateResult = getCollection(collectionName).updateOne(queue, data);
         return updateResult.getModifiedCount();
     }
 
 
-    public static long delete(String collectionName, Bson queue) {
+    public long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
         return deleteResult.getDeletedCount();
     }
 
-    public static long deleteOne(String collectionName, Bson queue) {
+    public long deleteOne(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteOne(queue);
         return deleteResult.getDeletedCount();
     }
 
-    public static String validation(Object obj) {
+    public String validation(Object obj) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -213,7 +218,7 @@ public enum MongoKit {
     }
 
     //校验单个属性
-    public static String validation(Object obj, String[] keys) {
+    public String validation(Object obj, String[] keys) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -236,15 +241,15 @@ public enum MongoKit {
         return buffer.toString();
     }
 
-    public static String setIndex(String collectionName, Bson bson) {
+    public String setIndex(String collectionName, Bson bson) {
         return getCollection(collectionName).createIndex(bson);
     }
 
-    public static List<String> setIndex(String collectionName, List<IndexModel> list) {
+    public List<String> setIndex(String collectionName, List<IndexModel> list) {
         return getCollection(collectionName).createIndexes(list);
     }
 
-    public static List<JSONObject> getIndex(String collectionName) {
+    public List<JSONObject> getIndex(String collectionName) {
 
         List list = new ArrayList();
 
@@ -260,17 +265,17 @@ public enum MongoKit {
         return list;
     }
 
-    public static void deleteIndex(String collectionName, Bson bson) {
+    public void deleteIndex(String collectionName, Bson bson) {
 
         getCollection(collectionName).dropIndex(bson);
 
     }
 
-    public static void deleteIndex(String collectionName) {
+    public void deleteIndex(String collectionName) {
         getCollection(collectionName).dropIndexes();
     }
 
-    private static Document iding(Document document) {
+    private Document iding(Document document) {
         Assertions.notNull("document", document);
         try {
             if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
@@ -283,7 +288,7 @@ public enum MongoKit {
         return document;
     }
 
-    private static Document jointing(Document document, String join) {
+    private Document jointing(Document document, String join) {
         if (join != null && !join.isEmpty()) {
             try {
                 DBRef dbRef = document.get(join, DBRef.class);

@@ -22,7 +22,7 @@ public class MongoRestyPlugin extends MongoPlugin implements Plugin {
     @Override
     public boolean start() {
         client = getMongoClient();
-        MongoKit.init(client, getDatabase());
+        MongoKit.INSTANS.init(client, getDatabase());
         return true;
     }
 

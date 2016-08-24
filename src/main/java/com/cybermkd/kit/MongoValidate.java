@@ -11,12 +11,12 @@ public class MongoValidate {
     String validateErrorMessage = "";
 
     public boolean validation() {
-        validateErrorMessage = MongoKit.validation(this);
+        validateErrorMessage = MongoKit.INSTANS.validation(this);
         return validateErrorMessage.isEmpty();
     }
 
     public boolean validation(String... keys) {
-        validateErrorMessage = MongoKit.validation(this, keys);
+        validateErrorMessage = MongoKit.INSTANS.validation(this, keys);
         return validateErrorMessage.isEmpty();
     }
 

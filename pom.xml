@@ -60,6 +60,7 @@
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
             <version>2.2</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--MongoDB驱动-->
@@ -81,20 +82,21 @@
             <groupId>cn.dreampie</groupId>
             <artifactId>resty-common</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--ICEREST-->
         <dependency>
             <groupId>com.cybermkd</groupId>
             <artifactId>ICEREST</artifactId>
-            <version>1.0.1.2</version>
+            <version>1.0.1.3</version>
         </dependency>
 
-        <!--SLF4J-->
+        <!--日志-->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.2</version>
         </dependency>
 
         <!--参数校验-->

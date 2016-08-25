@@ -2,10 +2,11 @@ package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cybermkd.common.util.Stringer;
+import com.cybermkd.log.Logger;
 import com.mongodb.Block;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
-import com.mongodb.assertions.Assertions;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexModel;
@@ -34,6 +35,7 @@ public enum MongoKit {
     INSTANS;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
+    private static Logger logger = Logger.getLogger(MongoKit.class);
 
     public MongoClient getClient() {
         return client;
@@ -69,7 +71,7 @@ public enum MongoKit {
 
             public void apply(Document document) {
                 document = iding(document);
-                list.add((JSONObject) JSON.toJSON(document));
+                list.add(toJSON(document));
             }
         };
 
@@ -86,7 +88,7 @@ public enum MongoKit {
 
             public void apply(Document document) {
                 document = iding(document);
-                list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
+                list.add(parseObject(document, clazz));
             }
         };
 
@@ -130,19 +132,19 @@ public enum MongoKit {
 
 
     public JSONObject findOne(String collectionName, Bson query, String join) {
-        return (JSONObject) JSON.toJSON(
+        return toJSON(
                 iding(jointing(getCollection(collectionName).find(query).first(), join))
         );
     }
 
     public <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
-        return JSON.parseObject(JSON.toJSONString(
-                iding(jointing(getCollection(collectionName).find(query).first(), join)))
+        return parseObject(
+                iding(jointing(getCollection(collectionName).find(query).first(), join))
                 , clazz);
     }
 
     public List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
-                                        int skip, String join) {
+                                 int skip, String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
@@ -151,7 +153,7 @@ public enum MongoKit {
             public void apply(Document document) {
                 document = iding(document);
                 document = jointing(document, join);
-                list.add((JSONObject) JSON.toJSON(document));
+                list.add(toJSON(document));
             }
         };
         getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
@@ -161,7 +163,7 @@ public enum MongoKit {
     }
 
     public <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
-                                   String join, Class<T> clazz) {
+                            String join, Class<T> clazz) {
 
         final List list = new ArrayList();
 
@@ -170,7 +172,7 @@ public enum MongoKit {
             public void apply(Document document) {
                 document = iding(document);
                 document = jointing(document, join);
-                list.add(JSON.parseObject(JSONObject.toJSONString(document), clazz));
+                list.add(parseObject(document, clazz));
             }
         };
 
@@ -256,7 +258,7 @@ public enum MongoKit {
         Block<Document> block = new Block<Document>() {
 
             public void apply(final Document document) {
-                list.add(JSON.parseObject(document.toJson()));
+                list.add(parseObject(document.toJson()));
             }
         };
 
@@ -276,9 +278,8 @@ public enum MongoKit {
     }
 
     private Document iding(Document document) {
-        Assertions.notNull("document", document);
         try {
-            if (document.get("_id") != null && !document.get("_id").toString().isEmpty()) {
+            if (document != null && !document.get("_id").toString().isEmpty()) {
                 document.put("id", document.get("_id").toString());
                 document.remove("_id");
             }
@@ -302,6 +303,48 @@ public enum MongoKit {
         }
         return document;
 
+    }
+
+    /*由于fastjson转换空对象时就会直接抛出异常,而在实际查询中查不到东西是很正常的
+    * ,所以为了避免会有空异常,特别做了异常处理*/
+
+    private <T> Object parseObject(String json) {
+        try {
+            if (Stringer.notBlank(json)) {
+                return JSON.parseObject(json);
+            }
+            return new JSONObject();
+        } catch (NullPointerException e) {
+            error("parseObject", json);
+            return new JSONObject();
+        }
+
+
+    }
+
+    private <T> T parseObject(Document doc, Class<T> clazz) {
+        try {
+            if (doc == null) {
+                return JSON.parseObject(new JSONObject().toJSONString(), clazz);
+            }
+            return JSON.parseObject(JSON.toJSONString(doc), clazz);
+        } catch (NullPointerException e) {
+            error("parseObject", clazz.getName());
+            return JSON.parseObject(new JSONObject().toJSONString(), clazz);
+        }
+    }
+
+    private JSONObject toJSON(Object obj) {
+        try {
+            return (JSONObject) JSON.toJSON(obj);
+        } catch (NullPointerException e) {
+            error("toJSON", obj.getClass().getName());
+            return new JSONObject();
+        }
+    }
+
+    private void error(String funName, String text) {
+        logger.error("MongKit tips: (づ￣ 3￣)づ " + funName + " is error ! " + text);
     }
 
 

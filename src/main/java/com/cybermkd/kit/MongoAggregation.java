@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class MongoAggregation {
 
+
     private MongoQuery query;
     private List<Bson> pipeline = new ArrayList<Bson>();
     private List<Bson> projections = new ArrayList<Bson>();
@@ -24,6 +25,34 @@ public class MongoAggregation {
     private boolean allowDiskUse = true;
 
     public MongoAggregation(MongoQuery query) {
+
+        /*复用MongoQuery*/
+
+        this.query = query;
+
+        if (query.getQuery() != null && query.getQuery().isEmpty()) {
+            pipeline.add(Aggregates.match(Filters.and(query.getQuery())));
+        }
+
+        if (query.getSort() != null) {
+            pipeline.add(Aggregates.sort(query.getSort()));
+        }
+
+        if (query.getSkip() > 0) {
+            pipeline.add(Aggregates.skip(query.getSkip()));
+        }
+
+        if (query.getLimit() > 0) {
+            pipeline.add(Aggregates.limit(query.getLimit()));
+        }
+
+    }
+
+    public MongoQuery getQuery() {
+        return query;
+    }
+
+    public void setQuery(MongoQuery query) {
         this.query = query;
     }
 
@@ -46,12 +75,8 @@ public class MongoAggregation {
         return this;
     }
 
-    public MongoAggregation match() {
-        pipeline.add(Aggregates.match(Filters.and(query.getQuery())));
-        return this;
-    }
 
-    public MongoAggregation projection(){
+    public MongoAggregation projection() {
         pipeline.add(Aggregates.project(Projections.fields(projections)));
         return this;
     }
@@ -76,20 +101,6 @@ public class MongoAggregation {
         return this;
     }
 
-    public MongoAggregation sort() {
-        pipeline.add(Aggregates.sort(query.getSort()));
-        return this;
-    }
-
-    public MongoAggregation skip() {
-        pipeline.add(Aggregates.skip(query.getSkip()));
-        return this;
-    }
-
-    public MongoAggregation limit() {
-        pipeline.add(Aggregates.limit(query.getLimit()));
-        return this;
-    }
 
     public MongoAggregation lookup(String from, String localField, String foreignField, String as) {
         pipeline.add(Aggregates.lookup(from, localField, foreignField, as));
@@ -106,17 +117,23 @@ public class MongoAggregation {
         return this;
     }
 
+
+    public MongoAggregation group(Bson bson) {
+        pipeline.add(Aggregates.group(bson));
+        return this;
+    }
+
     public MongoAggregation allowDiskUse(boolean allowDiskUse) {
         this.allowDiskUse = allowDiskUse;
         return this;
     }
 
     public List<JSONObject> aggregate() {
-        return MongoKit.INSTANS.aggregate(query.getCollectionName(), pipeline, allowDiskUse);
+        return MongoKit.INSTANCE.aggregate(query.getCollectionName(), pipeline, allowDiskUse);
     }
 
     public <T> List aggregate(Class<T> clazz) {
-        return MongoKit.INSTANS.aggregate(query.getCollectionName(), pipeline, allowDiskUse, clazz);
+        return MongoKit.INSTANCE.aggregate(query.getCollectionName(), pipeline, allowDiskUse, clazz);
     }
 
 

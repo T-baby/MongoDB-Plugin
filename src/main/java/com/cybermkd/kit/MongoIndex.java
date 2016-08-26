@@ -68,19 +68,19 @@ public class MongoIndex extends IndexOptions {
     }
 
     public List<JSONObject> get() {
-        return MongoKit.INSTANS.getIndex(collectionName);
+        return MongoKit.INSTANCE.getIndex(collectionName);
     }
 
     public String save() {
-        return MongoKit.INSTANS.setIndex(collectionName, bson);
+        return MongoKit.INSTANCE.setIndex(collectionName, bson);
     }
 
     public void delete() {
-        MongoKit.INSTANS.deleteIndex(collectionName, bson);
+        MongoKit.INSTANCE.deleteIndex(collectionName, bson);
     }
 
     public void deleteAll() {
-        MongoKit.INSTANS.deleteIndex(collectionName);
+        MongoKit.INSTANCE.deleteIndex(collectionName);
     }
 
     /*组合索引*/
@@ -90,7 +90,7 @@ public class MongoIndex extends IndexOptions {
     }
 
     public List<String> compound() {
-        return MongoKit.INSTANS.setIndex(collectionName, indexModels);
+        return MongoKit.INSTANCE.setIndex(collectionName, indexModels);
     }
 
     /*设置*/

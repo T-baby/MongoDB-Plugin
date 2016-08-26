@@ -22,7 +22,7 @@ public class MongoJFinalPlugin extends MongoPlugin implements IPlugin {
     @Override
     public boolean start() {
         client = getMongoClient();
-        MongoKit.INSTANS.init(client, getDatabase());
+        MongoKit.INSTANCE.init(client, getDatabase());
         return true;
     }
 

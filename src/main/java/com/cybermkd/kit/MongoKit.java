@@ -32,7 +32,7 @@ public enum MongoKit {
     /*
     *枚举实现单例模式
     */
-    INSTANS;
+    INSTANCE;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
     private static Logger logger = Logger.getLogger(MongoKit.class);
@@ -71,7 +71,7 @@ public enum MongoKit {
 
             public void apply(Document document) {
                 document = iding(document);
-                list.add(toJSON(document));
+                list.add(parseObject(document.toJson()));
             }
         };
 
@@ -131,15 +131,15 @@ public enum MongoKit {
     }
 
 
-    public JSONObject findOne(String collectionName, Bson query, String join) {
+    public JSONObject findOne(String collectionName, Bson query, Bson sort, String join) {
         return toJSON(
-                iding(jointing(getCollection(collectionName).find(query).first(), join))
+                iding(jointing(getCollection(collectionName).find(query).sort(sort).first(), join))
         );
     }
 
-    public <T> T findOne(String collectionName, Bson query, String join, Class<T> clazz) {
+    public <T> T findOne(String collectionName, Bson query, Bson sort, String join, Class<T> clazz) {
         return parseObject(
-                iding(jointing(getCollection(collectionName).find(query).first(), join))
+                iding(jointing(getCollection(collectionName).find(query).sort(sort).first(), join))
                 , clazz);
     }
 
@@ -279,12 +279,15 @@ public enum MongoKit {
 
     private Document iding(Document document) {
         try {
-            if (document != null && !document.get("_id").toString().isEmpty()) {
+            if (document == null || document.get("_id") == null) {
+                return document;
+            } else {
                 document.put("id", document.get("_id").toString());
                 document.remove("_id");
             }
         } catch (ClassCastException e) {
                 /*如果转换出错直接返回原本的值,不做任何处理*/
+
         }
         return document;
     }
@@ -308,7 +311,7 @@ public enum MongoKit {
     /*由于fastjson转换空对象时就会直接抛出异常,而在实际查询中查不到东西是很正常的
     * ,所以为了避免会有空异常,特别做了异常处理*/
 
-    private <T> Object parseObject(String json) {
+    private <T> JSONObject parseObject(String json) {
         try {
             if (Stringer.notBlank(json)) {
                 return JSON.parseObject(json);

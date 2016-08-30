@@ -1,7 +1,5 @@
 package com.cybermkd.kit;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +15,10 @@ public class MongoPage {
     private long totalRow;
     private boolean firstPage = false;
     private boolean lastPage = false;
-    private List<JSONObject> list = new ArrayList<JSONObject>();
+    private List list = new ArrayList();
 
     public MongoPage(int count, int page, int totalPage, long totalRow, boolean firstPage,
-                     boolean lastPage, List<JSONObject> result) {
+                     boolean lastPage, List result) {
 
         this.count = count;
         this.page = page;
@@ -56,7 +54,7 @@ public class MongoPage {
         return lastPage;
     }
 
-    public List<JSONObject> getList() {
+    public List getList() {
         return list;
     }
 }

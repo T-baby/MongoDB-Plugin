@@ -6,7 +6,7 @@ package com.cybermkd.constraints;
  * 文件描述:
  */
 
-import com.cybermkd.validation.ChineseValidator;
+import com.cybermkd.validation.InsideValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -19,17 +19,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ChineseValidator.class)
+@Constraint(validatedBy = InsideValidator.class)
 @Documented
-public @interface Chinese {
+public @interface Inside {
 
-    String message() default "{com.cybermkd.constraints.Chinese.message}";
+    String message() default "{com.cybermkd.constraints.Inside.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    boolean value();
+    String[] value();
 
 }
 

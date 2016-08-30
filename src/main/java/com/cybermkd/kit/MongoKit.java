@@ -2,16 +2,19 @@ package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cybermkd.common.util.Stringer;
+import com.cybermkd.log.Logger;
 import com.mongodb.Block;
+import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -24,92 +27,152 @@ import java.util.*;
  * 创建日期: 16/4/15
  * 文件描述:MongoDB操作工具类
  */
-public class MongoKit {
+public enum MongoKit {
 
-
-    final org.slf4j.Logger logger = LoggerFactory.getLogger(MongoKit.class);
-
+    /*
+    *枚举实现单例模式
+    */
+    INSTANCE;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
-    private static Validator validator;
+    private static Logger logger = Logger.getLogger(MongoKit.class);
 
-    public static void init(MongoClient client, String database) {
+    public MongoClient getClient() {
+        return client;
+    }
+
+    public void init(MongoClient client, String database) {
         MongoKit.client = client;
         MongoKit.defaultDb = client.getDatabase(database);
     }
 
-    public static MongoCollection<Document> getCollection(String collectionName) {
+    public MongoCollection<Document> getCollection(String collectionName) {
         return defaultDb.getCollection(collectionName);
     }
 
-    public static long insert(String collectionName, List<Document> docs) {
+    public long insert(String collectionName, List<Document> docs) {
         long before = getCollection(collectionName).count();
         getCollection(collectionName).insertMany(docs);
         return getCollection(collectionName).count() - before;
     }
 
 
-    public static long insert(String collectionName, Document doc) {
+    public long insert(String collectionName, Document doc) {
         long before = getCollection(collectionName).count();
         getCollection(collectionName).insertOne(doc);
         return getCollection(collectionName).count() - before;
     }
 
-
-    public static List<JSONObject> find(String collectionName, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0);
-    }
-
-    public static List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0);
-    }
-
-    public static <T> List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0,clazz);
-    }
-
-
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection) {
-        return find(collectionName, query, projection, new BsonDocument(), 0, 0);
-    }
-
-
-    public static long count(String collectionName, Bson query) {
-        return getCollection(collectionName).count(query);
-    }
-
-    public static long count(String collectionName) {
-        return getCollection(collectionName).count();
-    }
-
-
-    public static List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip) {
+    public List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
         Block<Document> block = new Block<Document>() {
 
-            public void apply(final Document document) {
-                document.put("id", document.get("_id").toString());
-                list.add(JSONObject.parseObject(document.toJson()));
+            public void apply(Document document) {
+                document = iding(document);
+                list.add(parseObject(document.toJson()));
             }
         };
 
-        getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
+        getCollection(collectionName).aggregate(query).allowDiskUse(allowDiskUse).forEach(block);
 
         return list;
-
     }
 
-    public static <T> List find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip, Class<T> clazz) {
+    public <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, Class<T> clazz) {
 
-        final List list=new ArrayList();
+        final List list = new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 
-            public void apply(final Document document) {
-                document.put("id", document.get("_id").toString());
-                list.add(JSON.parseObject(document.toJson(),clazz));
+            public void apply(Document document) {
+                document = iding(document);
+                list.add(parseObject(document, clazz));
+            }
+        };
+
+        getCollection(collectionName).aggregate(query).allowDiskUse(allowDiskUse).forEach(block);
+
+        return list;
+    }
+
+    public List<JSONObject> find(String collectionName, Bson projection) {
+        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
+    }
+
+    public List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "");
+    }
+
+    public List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, join);
+    }
+
+    public <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "", clazz);
+    }
+
+    public <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join, Class<T> clazz) {
+        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join, clazz);
+    }
+
+    public List<JSONObject> find(String collectionName, Bson query, Bson projection) {
+        return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
+    }
+
+
+    public long count(String collectionName, Bson query) {
+        return getCollection(collectionName).count(query);
+    }
+
+    public long count(String collectionName) {
+        return getCollection(collectionName).count();
+    }
+
+
+    public JSONObject findOne(String collectionName, Bson query, Bson sort, String join) {
+        return toJSON(
+                iding(jointing(getCollection(collectionName).find(query).sort(sort).first(), join))
+        );
+    }
+
+    public <T> T findOne(String collectionName, Bson query, Bson sort, String join, Class<T> clazz) {
+        return parseObject(
+                iding(jointing(getCollection(collectionName).find(query).sort(sort).first(), join))
+                , clazz);
+    }
+
+    public List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
+                                 int skip, String join) {
+
+        final List<JSONObject> list = new ArrayList<JSONObject>();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(Document document) {
+                document = iding(document);
+                document = jointing(document, join);
+                list.add(toJSON(document));
+            }
+        };
+        getCollection(collectionName).find(query).projection(projection).sort(sort).limit(limit).skip(skip).forEach(block);
+
+        return list;
+
+    }
+
+    public <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
+                            String join, Class<T> clazz) {
+
+        final List list = new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(Document document) {
+                document = iding(document);
+                document = jointing(document, join);
+                list.add(parseObject(document, clazz));
             }
         };
 
@@ -120,18 +183,28 @@ public class MongoKit {
     }
 
 
-    public static long update(String collectionName, Bson queue, Bson data) {
+    public long update(String collectionName, Bson queue, Bson data) {
         UpdateResult updateResult = getCollection(collectionName).updateMany(queue, data);
         return updateResult.getModifiedCount();
     }
 
+    public long updateOne(String collectionName, Bson queue, Bson data) {
+        UpdateResult updateResult = getCollection(collectionName).updateOne(queue, data);
+        return updateResult.getModifiedCount();
+    }
 
-    public static long delete(String collectionName, Bson queue) {
+
+    public long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
         return deleteResult.getDeletedCount();
     }
 
-    public static String validation(Object obj){
+    public long deleteOne(String collectionName, Bson queue) {
+        DeleteResult deleteResult = getCollection(collectionName).deleteOne(queue);
+        return deleteResult.getDeletedCount();
+    }
+
+    public String validation(Object obj) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -147,7 +220,7 @@ public class MongoKit {
     }
 
     //校验单个属性
-    public static String validation(Object obj,String[] keys){
+    public String validation(Object obj, String[] keys) {
 
         StringBuffer buffer = new StringBuffer(64);//用于存储验证后的错误信息
 
@@ -156,9 +229,9 @@ public class MongoKit {
 
         Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        for (String key:keys){
-            Iterator<ConstraintViolation<Object>> it=validator.validateProperty(obj,key).iterator();
-            if (it.hasNext()){
+        for (String key : keys) {
+            Iterator<ConstraintViolation<Object>> it = validator.validateProperty(obj, key).iterator();
+            if (it.hasNext()) {
                 constraintViolations.add(it.next());
             }
 
@@ -170,8 +243,115 @@ public class MongoKit {
         return buffer.toString();
     }
 
-}
+    public String setIndex(String collectionName, Bson bson) {
+        return getCollection(collectionName).createIndex(bson);
+    }
 
+    public List<String> setIndex(String collectionName, List<IndexModel> list) {
+        return getCollection(collectionName).createIndexes(list);
+    }
+
+    public List<JSONObject> getIndex(String collectionName) {
+
+        List list = new ArrayList();
+
+        Block<Document> block = new Block<Document>() {
+
+            public void apply(final Document document) {
+                list.add(parseObject(document.toJson()));
+            }
+        };
+
+        getCollection(collectionName).listIndexes().forEach(block);
+
+        return list;
+    }
+
+    public void deleteIndex(String collectionName, Bson bson) {
+
+        getCollection(collectionName).dropIndex(bson);
+
+    }
+
+    public void deleteIndex(String collectionName) {
+        getCollection(collectionName).dropIndexes();
+    }
+
+    private Document iding(Document document) {
+        try {
+            if (document == null || document.get("_id") == null) {
+                return document;
+            } else {
+                document.put("id", document.get("_id").toString());
+                document.remove("_id");
+            }
+        } catch (ClassCastException e) {
+                /*如果转换出错直接返回原本的值,不做任何处理*/
+
+        }
+        return document;
+    }
+
+    private Document jointing(Document document, String join) {
+        if (join != null && !join.isEmpty()) {
+            try {
+                DBRef dbRef = document.get(join, DBRef.class);
+                Document joinDoc = getCollection(dbRef.getCollectionName())
+                        .find(new Document("_id", dbRef.getId())).first();
+                joinDoc = iding(joinDoc);
+                document.put(join, joinDoc);
+            } catch (ClassCastException e) {
+                /*用于避免如果key对应的值并不是DBRef,如果转换出错直接返回原本的值,不做任何处理*/
+            }
+        }
+        return document;
+
+    }
+
+    /*由于fastjson转换空对象时就会直接抛出异常,而在实际查询中查不到东西是很正常的
+    * ,所以为了避免会有空异常,特别做了异常处理*/
+
+    private JSONObject parseObject(String json) {
+        try {
+            if (Stringer.notBlank(json)) {
+                return JSON.parseObject(json);
+            }
+            return new JSONObject();
+        } catch (NullPointerException e) {
+            error("parseObject", json);
+            return new JSONObject();
+        }
+
+
+    }
+
+    private <T> T parseObject(Document doc, Class<T> clazz) {
+        try {
+            if (doc == null) {
+                return JSON.parseObject(new JSONObject().toJSONString(), clazz);
+            }
+            return JSON.parseObject(JSON.toJSONString(doc), clazz);
+        } catch (NullPointerException e) {
+            error("parseObject", clazz.getName());
+            return JSON.parseObject(new JSONObject().toJSONString(), clazz);
+        }
+    }
+
+    private JSONObject toJSON(Object obj) {
+        try {
+            return (JSONObject) JSON.toJSON(obj);
+        } catch (NullPointerException e) {
+            error("toJSON", obj.getClass().getName());
+            return new JSONObject();
+        }
+    }
+
+    private void error(String funName, String text) {
+        logger.error("MongKit tips: (づ￣ 3￣)づ " + funName + " is error ! " + text);
+    }
+
+
+}
 
 
 

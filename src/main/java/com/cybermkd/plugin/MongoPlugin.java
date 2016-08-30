@@ -1,8 +1,6 @@
 package com.cybermkd.plugin;
 
 import com.mongodb.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +11,6 @@ import java.util.List;
  * 文件描述:支持更多特性的MongoPlugin
  */
 public class MongoPlugin {
-
-    final Logger logger = LoggerFactory.getLogger(MongoPlugin.class);
 
     private MongoClientOptions.Builder options = MongoClientOptions.builder();
 
@@ -71,6 +67,7 @@ public class MongoPlugin {
         this.options = opitions;
         return this;
     }
+
 
     /*自定义读写分离
     * primary

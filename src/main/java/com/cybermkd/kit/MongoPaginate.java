@@ -31,8 +31,8 @@ public class MongoPaginate {
             ++totalPage;
         }
 
-        if (count <= 0 || count > totalRow || page <= 0 || page > totalPage || page * count > totalRow) {
-            new RuntimeException("MongPage tips: (づ￣ 3￣)づ count or page is error !");
+        if (count <= 0 || count > totalRow || page <= 0 || page > totalPage || (long) page * (long) count > totalRow) {
+            throw new RuntimeException("MongPage tips: (づ￣ 3￣)づ count or page is error !");
         }
 
         this.firstPage = this.page == 1;
@@ -46,6 +46,20 @@ public class MongoPaginate {
         return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
     }
 
+    public <T> MongoPage find(Class<T> clazz) {
+        this.list = query.limit(count).skip(skip()).find(clazz);
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
+
+    public MongoPage findAll() {
+        this.list = query.limit(count).skip(skip()).findAll();
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
+
+    public <T> MongoPage findAll(Class<T> clazz) {
+        this.list = query.limit(count).skip(skip()).findAll(clazz);
+        return new MongoPage(count, page, totalPage, totalRow, firstPage, lastPage, list);
+    }
 
     private int skip() {
         if (firstPage) {

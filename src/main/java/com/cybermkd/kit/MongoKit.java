@@ -311,7 +311,7 @@ public enum MongoKit {
     /*由于fastjson转换空对象时就会直接抛出异常,而在实际查询中查不到东西是很正常的
     * ,所以为了避免会有空异常,特别做了异常处理*/
 
-    private <T> JSONObject parseObject(String json) {
+    private JSONObject parseObject(String json) {
         try {
             if (Stringer.notBlank(json)) {
                 return JSON.parseObject(json);

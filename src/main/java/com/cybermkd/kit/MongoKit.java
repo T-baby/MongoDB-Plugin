@@ -106,7 +106,7 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, join);
+        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join);
     }
 
     public <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
@@ -143,7 +143,7 @@ public enum MongoKit {
                 , clazz);
     }
 
-    public List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
+    public List<JSONObject> find(String collectionName, Bson query, Bson sort, Bson projection, int limit,
                                  int skip, String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -162,7 +162,7 @@ public enum MongoKit {
 
     }
 
-    public <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
+    public <T> List<T> find(String collectionName, Bson query, Bson sort, Bson projection, int limit, int skip,
                             String join, Class<T> clazz) {
 
         final List list = new ArrayList();

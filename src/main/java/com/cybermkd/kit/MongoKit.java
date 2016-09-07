@@ -52,14 +52,14 @@ public enum MongoKit {
 
     public long insert(String collectionName, List<Document> docs) {
         long before = getCollection(collectionName).count();
-        getCollection(collectionName).insertMany(docs);
+        getCollection(collectionName).insertMany(uniding(docs));
         return getCollection(collectionName).count() - before;
     }
 
 
     public long insert(String collectionName, Document doc) {
         long before = getCollection(collectionName).count();
-        getCollection(collectionName).insertOne(doc);
+        getCollection(collectionName).insertOne(uniding(doc));
         return getCollection(collectionName).count() - before;
     }
 
@@ -282,7 +282,28 @@ public enum MongoKit {
             if (document == null || document.get("_id") == null) {
                 return document;
             } else {
-                document.put("id", document.get("_id").toString());
+                document.put("_id", document.get("_id").toString());
+            }
+        } catch (ClassCastException e) {
+                /*如果转换出错直接返回原本的值,不做任何处理*/
+
+        }
+        return document;
+    }
+
+    private List<Document> uniding(List<Document> list) {
+        List<Document> newList=new ArrayList<Document>();
+        for (Document doc:list) {
+            newList.add(uniding(doc));
+        }
+        return newList;
+    }
+
+    private Document uniding(Document document) {
+        try {
+            if (document == null || document.get("_id") == null) {
+                return document;
+            } else {
                 document.remove("_id");
             }
         } catch (ClassCastException e) {

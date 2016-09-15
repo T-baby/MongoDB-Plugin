@@ -2,8 +2,6 @@ package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cybermkd.common.util.Stringer;
-import com.cybermkd.log.Logger;
 import com.mongodb.Block;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
@@ -15,6 +13,8 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -35,7 +35,7 @@ public enum MongoKit {
     INSTANCE;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
-    private static Logger logger = Logger.getLogger(MongoKit.class);
+    private static Logger logger = LoggerFactory.getLogger(MongoKit.class.getName());
 
     public MongoClient getClient() {
         return client;
@@ -50,17 +50,13 @@ public enum MongoKit {
         return defaultDb.getCollection(collectionName);
     }
 
-    public long insert(String collectionName, List<Document> docs) {
-        long before = getCollection(collectionName).count();
+    public void insert(String collectionName, List<Document> docs) {
         getCollection(collectionName).insertMany(uniding(docs));
-        return getCollection(collectionName).count() - before;
     }
 
 
-    public long insert(String collectionName, Document doc) {
-        long before = getCollection(collectionName).count();
+    public void insert(String collectionName, Document doc) {
         getCollection(collectionName).insertOne(uniding(doc));
-        return getCollection(collectionName).count() - before;
     }
 
     public List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
@@ -292,8 +288,8 @@ public enum MongoKit {
     }
 
     private List<Document> uniding(List<Document> list) {
-        List<Document> newList=new ArrayList<Document>();
-        for (Document doc:list) {
+        List<Document> newList = new ArrayList<Document>();
+        for (Document doc : list) {
             newList.add(uniding(doc));
         }
         return newList;
@@ -334,7 +330,7 @@ public enum MongoKit {
 
     private JSONObject parseObject(String json) {
         try {
-            if (Stringer.notBlank(json)) {
+            if (json!=null&&!json.isEmpty()) {
                 return JSON.parseObject(json);
             }
             return new JSONObject();

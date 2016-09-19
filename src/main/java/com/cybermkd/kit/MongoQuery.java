@@ -398,6 +398,11 @@ public class MongoQuery {
         return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data));
     }
 
+
+    public long replace(Object obj) {
+        return MongoKit.INSTANCE.replaceOne(collectionName, and(query), Document.parse(JSON.toJSONString(obj)));
+    }
+
     public long delete() {
         return MongoKit.INSTANCE.delete(collectionName, and(query));
     }

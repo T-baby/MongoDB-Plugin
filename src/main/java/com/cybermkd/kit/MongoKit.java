@@ -189,6 +189,10 @@ public enum MongoKit {
         return updateResult.getModifiedCount();
     }
 
+    public long replaceOne(String collectionName, Bson queue, Document document) {
+        UpdateResult updateResult = getCollection(collectionName).replaceOne(queue, document);
+        return updateResult.getModifiedCount();
+    }
 
     public long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);

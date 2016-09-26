@@ -278,17 +278,25 @@ public class MongoQuery {
         return this;
     }
 
-    public long save() {
-        long row = MongoKit.INSTANCE.insert(collectionName, document);
-        this.id = this.document.getObjectId("_id").toString();
-        document.clear();
-        return row;
+    public boolean save() {
+        try {
+            MongoKit.INSTANCE.insert(collectionName, document);
+            this.id = this.document.getObjectId("_id").toString();
+            document.clear();
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
-    public long saveList() {
-        long row = MongoKit.INSTANCE.insert(collectionName, documents);
-        documents.clear();
-        return row;
+    public boolean saveList() {
+        try {
+            MongoKit.INSTANCE.insert(collectionName, documents);
+            documents.clear();
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
 
@@ -388,6 +396,11 @@ public class MongoQuery {
 
     public long updateOne() {
         return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data));
+    }
+
+
+    public long replace(Object obj) {
+        return MongoKit.INSTANCE.replaceOne(collectionName, and(query), Document.parse(JSON.toJSONString(obj)));
     }
 
     public long delete() {

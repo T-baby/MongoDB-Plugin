@@ -5,7 +5,7 @@
 
     <groupId>com.cybermkd</groupId>
     <artifactId>MongodbPlugin</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.7.1</version>
     <packaging>jar</packaging>
 
     <name>MongodbPlugin</name>
@@ -85,12 +85,13 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--ICEREST-->
         <dependency>
             <groupId>com.cybermkd</groupId>
             <artifactId>ICEREST</artifactId>
             <version>1.0.1.3</version>
+            <scope>provided</scope>
         </dependency>
+
 
         <!--日志-->
         <dependency>

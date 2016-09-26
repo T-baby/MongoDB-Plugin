@@ -2,8 +2,6 @@ package com.cybermkd.kit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cybermkd.common.util.Stringer;
-import com.cybermkd.log.Logger;
 import com.mongodb.Block;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
@@ -15,6 +13,8 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -35,7 +35,7 @@ public enum MongoKit {
     INSTANCE;
     private static MongoClient client;
     private static MongoDatabase defaultDb;
-    private static Logger logger = Logger.getLogger(MongoKit.class);
+    private static Logger logger = LoggerFactory.getLogger(MongoKit.class.getName());
 
     public MongoClient getClient() {
         return client;
@@ -50,17 +50,13 @@ public enum MongoKit {
         return defaultDb.getCollection(collectionName);
     }
 
-    public long insert(String collectionName, List<Document> docs) {
-        long before = getCollection(collectionName).count();
-        getCollection(collectionName).insertMany(docs);
-        return getCollection(collectionName).count() - before;
+    public void insert(String collectionName, List<Document> docs) {
+        getCollection(collectionName).insertMany(uniding(docs));
     }
 
 
-    public long insert(String collectionName, Document doc) {
-        long before = getCollection(collectionName).count();
-        getCollection(collectionName).insertOne(doc);
-        return getCollection(collectionName).count() - before;
+    public void insert(String collectionName, Document doc) {
+        getCollection(collectionName).insertOne(uniding(doc));
     }
 
     public List<JSONObject> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse) {
@@ -106,7 +102,7 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, join);
+        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join);
     }
 
     public <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
@@ -143,7 +139,7 @@ public enum MongoKit {
                 , clazz);
     }
 
-    public List<JSONObject> find(String collectionName, Bson query, Bson projection, Bson sort, int limit,
+    public List<JSONObject> find(String collectionName, Bson query, Bson sort, Bson projection, int limit,
                                  int skip, String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
@@ -162,7 +158,7 @@ public enum MongoKit {
 
     }
 
-    public <T> List<T> find(String collectionName, Bson query, Bson projection, Bson sort, int limit, int skip,
+    public <T> List<T> find(String collectionName, Bson query, Bson sort, Bson projection, int limit, int skip,
                             String join, Class<T> clazz) {
 
         final List list = new ArrayList();
@@ -193,6 +189,10 @@ public enum MongoKit {
         return updateResult.getModifiedCount();
     }
 
+    public long replaceOne(String collectionName, Bson queue, Document document) {
+        UpdateResult updateResult = getCollection(collectionName).replaceOne(queue, document);
+        return updateResult.getModifiedCount();
+    }
 
     public long delete(String collectionName, Bson queue) {
         DeleteResult deleteResult = getCollection(collectionName).deleteMany(queue);
@@ -282,7 +282,28 @@ public enum MongoKit {
             if (document == null || document.get("_id") == null) {
                 return document;
             } else {
-                document.put("id", document.get("_id").toString());
+                document.put("_id", document.get("_id").toString());
+            }
+        } catch (ClassCastException e) {
+                /*如果转换出错直接返回原本的值,不做任何处理*/
+
+        }
+        return document;
+    }
+
+    private List<Document> uniding(List<Document> list) {
+        List<Document> newList = new ArrayList<Document>();
+        for (Document doc : list) {
+            newList.add(uniding(doc));
+        }
+        return newList;
+    }
+
+    private Document uniding(Document document) {
+        try {
+            if (document == null || document.get("_id") == null) {
+                return document;
+            } else {
                 document.remove("_id");
             }
         } catch (ClassCastException e) {
@@ -313,7 +334,7 @@ public enum MongoKit {
 
     private JSONObject parseObject(String json) {
         try {
-            if (Stringer.notBlank(json)) {
+            if (json!=null&&!json.isEmpty()) {
                 return JSON.parseObject(json);
             }
             return new JSONObject();

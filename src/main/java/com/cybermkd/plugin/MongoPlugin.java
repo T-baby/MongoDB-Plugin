@@ -103,8 +103,9 @@ public class MongoPlugin {
         return this;
     }
 
+    /*在分布式下写到多个节点后才进行返回*/
     public MongoPlugin writeSafe() {
-        this.options.writeConcern(WriteConcern.SAFE);
+        this.options.writeConcern(WriteConcern.MAJORITY);
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.cybermkd;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.cybermkd.constraints.Chinese;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -21,6 +22,7 @@ public class Teacher {
      */
 
 
+    @JSONField(name = "_id")
     private String id;
 
     @Chinese(value = true)

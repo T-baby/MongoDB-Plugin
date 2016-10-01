@@ -94,7 +94,7 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
+        return find(collectionName, new BsonDocument(), new BsonDocument(), projection, 0, 0, "");
     }
 
     public List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
@@ -114,7 +114,7 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, Bson query, Bson projection) {
-        return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
+        return find(collectionName, query, new BsonDocument(), projection, 0, 0, "");
     }
 
 

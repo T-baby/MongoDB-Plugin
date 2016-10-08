@@ -301,9 +301,12 @@ public class MongoQuery {
 
 
     public MongoQuery projection(String... keys) {
+        BasicDBObject dbObj = new BasicDBObject();
         for (String key : keys) {
-            this.projection = new BasicDBObject().append(key, 1);
+            dbObj.append(key, 1);
         }
+
+        this.projection = dbObj;
         return this;
     }
 

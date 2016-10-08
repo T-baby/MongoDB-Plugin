@@ -1,5 +1,6 @@
 package com.cybermkd;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.cybermkd.constraints.Chinese;
 import com.cybermkd.constraints.Exist;
 import com.cybermkd.constraints.Inside;
@@ -29,6 +30,7 @@ public class Student extends MongoValidate {
      */
 
 
+    @JSONField(name = "_id")
     @Exist(value = false, collectionName = "student", key = "id")
     private String id;
 

@@ -94,27 +94,27 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, new BsonDocument(), 0, 0, "");
+        return find(collectionName, new BsonDocument(), new BsonDocument(), projection, 0, 0, "");
     }
 
     public List<JSONObject> find(String collectionName, int limit, Bson sort, Bson projection) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "");
+        return find(collectionName, new BsonDocument(), sort, projection, limit, 0, "");
     }
 
     public List<JSONObject> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join);
+        return find(collectionName, new BsonDocument(), sort, projection, limit, skip, join);
     }
 
     public <T> List<T> find(String collectionName, int limit, Bson sort, Bson projection, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, 0, "", clazz);
+        return find(collectionName, new BsonDocument(), sort, projection, limit, 0, "", clazz);
     }
 
     public <T> List<T> find(String collectionName, int limit, int skip, Bson sort, Bson projection, String join, Class<T> clazz) {
-        return find(collectionName, new BsonDocument(), projection, sort, limit, skip, join, clazz);
+        return find(collectionName, new BsonDocument(), sort, projection, limit, skip, join, clazz);
     }
 
     public List<JSONObject> find(String collectionName, Bson query, Bson projection) {
-        return find(collectionName, query, projection, new BsonDocument(), 0, 0, "");
+        return find(collectionName, query, new BsonDocument(), projection, 0, 0, "");
     }
 
 

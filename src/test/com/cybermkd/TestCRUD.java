@@ -44,7 +44,7 @@ public class TestCRUD extends TestMongodb{
 
     @Test
     public void delete(){
-        Teacher teacher=new MongoQuery().use("teacher").eq("name","胡扬").findOne(Teacher.class);
+        Teacher teacher=new MongoQuery().use("teacher").eq("name","兔宝宝").findOne(Teacher.class);
         logger.info(String.valueOf(new MongoQuery().use("teacher").byId(teacher.getId()).deleteOne()));
     }
 

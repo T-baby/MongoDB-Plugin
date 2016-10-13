@@ -14,9 +14,9 @@ public class MongoPlugin {
 
     private MongoClientOptions.Builder options = MongoClientOptions.builder();
 
-    private List<ServerAddress> hostList = new ArrayList<>();
+    private List<ServerAddress> hostList = new ArrayList<ServerAddress>();
 
-    private List<MongoCredential> authList = new ArrayList<>();
+    private List<MongoCredential> authList = new ArrayList<MongoCredential>();
 
     /*数据库名*/
     private String database;

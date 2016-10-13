@@ -20,7 +20,7 @@ public class MongoIndex extends IndexOptions {
 
     private Bson bson;
 
-    private List<IndexModel> indexModels = new ArrayList<>();
+    private List<IndexModel> indexModels = new ArrayList<IndexModel>();
 
     public MongoIndex(String collectionName) {
         this.collectionName = collectionName;

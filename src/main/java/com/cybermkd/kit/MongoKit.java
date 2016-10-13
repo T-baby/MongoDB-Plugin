@@ -76,7 +76,7 @@ public enum MongoKit {
         return list;
     }
 
-    public <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, Class<T> clazz) {
+    public <T> List<T> aggregate(String collectionName, List<Bson> query, boolean allowDiskUse, final Class<T> clazz) {
 
         final List list = new ArrayList();
 
@@ -140,7 +140,7 @@ public enum MongoKit {
     }
 
     public List<JSONObject> find(String collectionName, Bson query, Bson sort, Bson projection, int limit,
-                                 int skip, String join) {
+                                 int skip, final String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 
@@ -159,7 +159,7 @@ public enum MongoKit {
     }
 
     public <T> List<T> find(String collectionName, Bson query, Bson sort, Bson projection, int limit, int skip,
-                            String join, Class<T> clazz) {
+                            final String join, final Class<T> clazz) {
 
         final List list = new ArrayList();
 
@@ -214,7 +214,11 @@ public enum MongoKit {
         Set<ConstraintViolation<Object>> constraintViolations = validator
                 .validate(obj);//验证某个对象,其实也可以只验证其中的某一个属性的
 
-        constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
+        Iterator iter = constraintViolations.iterator();
+        while(iter.hasNext()){
+            ConstraintViolation c= (ConstraintViolation) iter.next();
+            buffer.append(c.getMessage());
+        }
 
         return buffer.toString();
     }
@@ -227,7 +231,7 @@ public enum MongoKit {
         Validator validator = Validation.buildDefaultValidatorFactory()
                 .getValidator();
 
-        Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
+        Set<ConstraintViolation<Object>> constraintViolations = new HashSet<ConstraintViolation<Object>>();
 
         for (String key : keys) {
             Iterator<ConstraintViolation<Object>> it = validator.validateProperty(obj, key).iterator();
@@ -238,7 +242,11 @@ public enum MongoKit {
         }
 
 
-        constraintViolations.forEach((ConstraintViolation c) -> buffer.append(c.getMessage()));
+        Iterator iter = constraintViolations.iterator();
+        while(iter.hasNext()){
+            ConstraintViolation c= (ConstraintViolation) iter.next();
+            buffer.append(c.getMessage());
+        }
 
         return buffer.toString();
     }
@@ -253,7 +261,7 @@ public enum MongoKit {
 
     public List<JSONObject> getIndex(String collectionName) {
 
-        List list = new ArrayList();
+        final List list = new ArrayList();
 
         Block<Document> block = new Block<Document>() {
 

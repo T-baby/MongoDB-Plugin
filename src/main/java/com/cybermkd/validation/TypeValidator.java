@@ -23,15 +23,14 @@ public class TypeValidator implements ConstraintValidator<Type, String> {
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        switch (value) {
-            case "int":
-                return isInt(s);
-            case "double":
-                return isDouble(s);
-            case "boolean":
-                return isDouble(s);
-            default:
-                return true;
+        if (value.equals("int")) {
+            return isInt(s);
+        } else if (value.equals("double")) {
+            return isDouble(s);
+        } else if (value.equals("boolean")) {
+            return isDouble(s);
+        } else {
+            return true;
         }
     }
 

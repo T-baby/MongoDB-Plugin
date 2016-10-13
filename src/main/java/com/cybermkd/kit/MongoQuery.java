@@ -14,8 +14,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import javax.validation.ConstraintViolation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -196,9 +198,12 @@ public class MongoQuery {
     public MongoQuery in(String key, List values) {
         if ("_id".equals(key)) {
             List<ObjectId> idList = new ArrayList<ObjectId>();
-            values.forEach(value -> {
+
+            Iterator iter = values.iterator();
+            while(iter.hasNext()){
+                Object value= (Object) iter.next();
                 idList.add(new ObjectId(String.valueOf(value)));
-            });
+            }
             query.add(Filters.in(key, idList));
         } else {
             query.add(Filters.in(key, values));

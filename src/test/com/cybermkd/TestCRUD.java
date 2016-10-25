@@ -30,6 +30,12 @@ public class TestCRUD extends TestMongodb{
     }
 
     @Test
+    public void findOr(){
+        MongoQuery query=new MongoQuery();
+        logger.info(JSON.toJSONString(query.use("teacher").or(new MongoQuery().eq("name","卫越相").eq("name","危兴修")).find()));
+    }
+
+    @Test
     public void findAndJoin(){
         MongoQuery query=new MongoQuery();
         logger.info(JSON.toJSONString(query.use("student").join("teacher").findOne(Student.class)));

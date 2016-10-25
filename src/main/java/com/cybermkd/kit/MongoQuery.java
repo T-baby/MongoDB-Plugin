@@ -14,7 +14,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import javax.validation.ConstraintViolation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -62,21 +61,21 @@ public class MongoQuery {
         return this;
     }
 
-    public static Bson and(List<Bson> query) {
-        return query.size() == 0 ? new BsonDocument() : Filters.and((Iterable) query);
+    public static Bson and(List<Bson> q) {
+        return q.size() == 0 ? new BsonDocument() : Filters.and((Iterable) q);
     }
 
-    public MongoQuery or(MongoQuery query) {
-        query.add(or(query.getQuery()));
+    public MongoQuery or(MongoQuery q) {
+        query.add(or(q.getQuery()));
         return this;
     }
 
-    public static Bson or(List<Bson> query) {
-        return query.size() == 0 ? new BsonDocument() : Filters.or((Iterable) query);
+    public static Bson or(List<Bson> q) {
+        return q.size() == 0 ? new BsonDocument() : Filters.or((Iterable) q);
     }
 
-    public MongoQuery nor(MongoQuery query) {
-        query.add(nor(query.getQuery()));
+    public MongoQuery nor(MongoQuery q) {
+        query.add(nor(q.getQuery()));
         return this;
     }
 

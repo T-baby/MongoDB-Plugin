@@ -65,13 +65,23 @@ public class MongoQuery {
         return q.size() == 0 ? new BsonDocument() : Filters.and((Iterable) q);
     }
 
-    public MongoQuery or(MongoQuery q) {
-        query.add(or(q.getQuery()));
+    public MongoQuery or(MongoQuery ...qs) {
+
+        List<Bson> bsons=new ArrayList<Bson>();
+
+        for (MongoQuery q : qs) {
+            bsons.add(and(q.getQuery()));
+        }
+        query.add(or(bsons));
         return this;
     }
 
     public static Bson or(List<Bson> q) {
         return q.size() == 0 ? new BsonDocument() : Filters.or((Iterable) q);
+    }
+
+    public static Bson or(Bson q) {
+        return Filters.or(q);
     }
 
     public MongoQuery nor(MongoQuery q) {
@@ -417,6 +427,5 @@ public class MongoQuery {
     public long deleteOne() {
         return MongoKit.INSTANCE.deleteOne(collectionName, and(query));
     }
-
 
 }

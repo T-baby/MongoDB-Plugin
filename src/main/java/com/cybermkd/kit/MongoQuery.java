@@ -14,6 +14,8 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -65,10 +67,14 @@ public class MongoQuery {
         return q.size() == 0 ? new BsonDocument() : Filters.and((Iterable) q);
     }
 
-    public MongoQuery or(MongoQuery ...qs) {
+    public MongoQuery or(MongoQuery... qs) {
 
-        List<Bson> bsons=new ArrayList<Bson>();
+        orQuery(Arrays.asList(qs));
+        return this;
+    }
 
+    public MongoQuery orQuery(List<MongoQuery> qs) {
+        List<Bson> bsons = new ArrayList<Bson>();
         for (MongoQuery q : qs) {
             bsons.add(and(q.getQuery()));
         }
@@ -129,9 +135,21 @@ public class MongoQuery {
         return this;
     }
 
-    /*支持java bean*/
     public MongoQuery set(Object obj) {
-        document = Document.parse(JSON.toJSONString(obj));
+        document = new Document().parse(JSON.toJSONString(obj));
+        return this;
+    }
+
+    public MongoQuery setx(Object obj) {
+        try {
+            document = new Document(MongoKit.INSTANCE.toMap(obj));
+        } catch (IntrospectionException e) {
+            MongoKit.INSTANCE.error(this.getClass().getName(), e.getMessage());
+        } catch (InvocationTargetException e) {
+            MongoKit.INSTANCE.error(this.getClass().getName(), e.getMessage());
+        } catch (IllegalAccessException e) {
+            MongoKit.INSTANCE.error(this.getClass().getName(), e.getMessage());
+        }
         return this;
     }
 
@@ -209,8 +227,8 @@ public class MongoQuery {
             List<ObjectId> idList = new ArrayList<ObjectId>();
 
             Iterator iter = values.iterator();
-            while(iter.hasNext()){
-                Object value= (Object) iter.next();
+            while (iter.hasNext()) {
+                Object value = (Object) iter.next();
                 idList.add(new ObjectId(String.valueOf(value)));
             }
             query.add(Filters.in(key, idList));

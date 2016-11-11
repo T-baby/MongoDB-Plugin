@@ -435,7 +435,9 @@ public class MongoQuery {
 
 
     public long replace(Object obj) {
-        return MongoKit.INSTANCE.replaceOne(collectionName, and(query), Document.parse(JSON.toJSONString(obj)));
+        Document doc=Document.parse(JSON.toJSONString(obj));
+        doc.remove("_id");
+        return MongoKit.INSTANCE.replaceOne(collectionName, and(query), doc);
     }
 
     public long delete() {

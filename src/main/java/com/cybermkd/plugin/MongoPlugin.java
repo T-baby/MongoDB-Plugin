@@ -1,5 +1,6 @@
 package com.cybermkd.plugin;
 
+import com.cybermkd.kit.MongoKit;
 import com.mongodb.*;
 
 import java.util.ArrayList;
@@ -109,6 +110,11 @@ public class MongoPlugin {
         return this;
     }
 
+    /*如果不是debug模式可以关闭日志*/
+    public MongoPlugin setDebug(boolean debug) {
+        MongoKit.INSTANCE.setDebug(debug);
+        return this;
+    }
 
     public MongoClient getMongoClient() {
 

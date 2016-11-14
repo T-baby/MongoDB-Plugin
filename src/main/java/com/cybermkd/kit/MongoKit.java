@@ -221,8 +221,8 @@ public enum MongoKit {
                 .validate(obj);//验证某个对象,其实也可以只验证其中的某一个属性的
 
         Iterator iter = constraintViolations.iterator();
-        while(iter.hasNext()){
-            ConstraintViolation c= (ConstraintViolation) iter.next();
+        while (iter.hasNext()) {
+            ConstraintViolation c = (ConstraintViolation) iter.next();
             buffer.append(c.getMessage());
         }
 
@@ -249,8 +249,8 @@ public enum MongoKit {
 
 
         Iterator iter = constraintViolations.iterator();
-        while(iter.hasNext()){
-            ConstraintViolation c= (ConstraintViolation) iter.next();
+        while (iter.hasNext()) {
+            ConstraintViolation c = (ConstraintViolation) iter.next();
             buffer.append(c.getMessage());
         }
 
@@ -348,7 +348,7 @@ public enum MongoKit {
 
     private JSONObject parseObject(String json) {
         try {
-            if (json!=null&&!json.isEmpty()) {
+            if (json != null && !json.isEmpty()) {
                 return JSON.parseObject(json);
             }
             return new JSONObject();
@@ -385,13 +385,13 @@ public enum MongoKit {
         logger.error("MongKit tips: (づ￣ 3￣)づ " + funName + " is error ! " + text);
     }
 
-    public static Map toMap(Object bean) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+    public Map toMap(Object bean) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
         Class type = bean.getClass();
         Map returnMap = new HashMap();
         BeanInfo beanInfo = Introspector.getBeanInfo(type);
 
-        PropertyDescriptor[] propertyDescriptors =  beanInfo.getPropertyDescriptors();
-        for (int i = 0; i< propertyDescriptors.length; i++) {
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for (int i = 0; i < propertyDescriptors.length; i++) {
             PropertyDescriptor descriptor = propertyDescriptors[i];
             String propertyName = descriptor.getName();
             if (!propertyName.equals("class")) {
@@ -407,6 +407,16 @@ public enum MongoKit {
         return returnMap;
     }
 
+    public void setDebug(boolean debug) {
+        ch.qos.logback.classic.Level level;
+        if (debug) {
+            level = ch.qos.logback.classic.Level.DEBUG;
+        } else {
+            level = ch.qos.logback.classic.Level.WARN;
+        }
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
+    }
 
 }
 

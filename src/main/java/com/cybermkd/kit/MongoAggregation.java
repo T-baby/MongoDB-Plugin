@@ -30,7 +30,7 @@ public class MongoAggregation {
 
         this.query = query;
 
-        if (query.getQuery() != null && query.getQuery().isEmpty()) {
+        if (query.getQuery() != null && !query.getQuery().isEmpty()) {
             pipeline.add(Aggregates.match(Filters.and(query.getQuery())));
         }
 

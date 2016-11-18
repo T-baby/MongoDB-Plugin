@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
-import com.mongodb.client.model.TextSearchOptions;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.model.*;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -322,8 +319,17 @@ public class MongoQuery {
     }
 
     public boolean saveList() {
+        return saveList(false);
+    }
+
+    /*快速插入用于插入不需要排序的文档，如一个人的账户等等*/
+    public boolean saveList(boolean fast) {
         try {
-            MongoKit.INSTANCE.insert(collectionName, documents);
+            InsertManyOptions ops=new InsertManyOptions();
+            if (fast){
+                ops.ordered(false);
+            }
+            MongoKit.INSTANCE.insert(collectionName, documents,ops);
             documents.clear();
             return true;
         } catch (RuntimeException e) {

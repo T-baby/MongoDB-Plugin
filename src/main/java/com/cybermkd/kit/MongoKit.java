@@ -8,6 +8,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexModel;
+import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
@@ -56,8 +57,8 @@ public enum MongoKit {
         return defaultDb.getCollection(collectionName);
     }
 
-    public void insert(String collectionName, List<Document> docs) {
-        getCollection(collectionName).insertMany(uniding(docs));
+    public void insert(String collectionName, List<Document> docs, InsertManyOptions ops) {
+        getCollection(collectionName).insertMany(uniding(docs),ops);
     }
 
 

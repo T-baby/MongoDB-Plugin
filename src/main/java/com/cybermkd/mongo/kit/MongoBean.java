@@ -21,6 +21,7 @@ public class MongoBean implements Cloneable {
         return this;
     }
 
+    @Override
     public String toString() {
         return JSON.toJSONString(this);
     }
@@ -33,8 +34,5 @@ public class MongoBean implements Cloneable {
         return (JSONObject) JSON.toJSON(this);
     }
 
-    public String toJSONString() {
-        return JSON.toJSONString(this);
-    }
 
 }

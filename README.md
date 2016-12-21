@@ -1,20 +1,29 @@
-###MongoDB-Plugin用于帮助JAVA开发者更容易使用MongoDB而开发的###
+#
+MongoDB Plugin
 
-因为自己工作中会需要用到MongoDB，为了在JAVA上用MongoDB用得更舒服，所以开发了这个工具。
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/weibocom/motan/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/com.cybermkd/MongodbPlugin.svg?label=Maven Central)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22MongodbPlugin%22)
 
-相较于之前的版本，几乎重写所有代码。
+MongoDB Plugin maybe is the most useful tool in Java and could follow up the real-time official version of ORM, which make you feel comfortable when you are using MongoDB.
+ 
+Basically synchronous with MongoDB’ version (the latest 3.4.0);
 
-要求java8及以上，MongoDB由于3.0后改变较大，最好是3.2或以上。
+Comfortable usage mode, which is like natural language;
 
-具有以下特性：
+Barely learning cost;
 
-    与MongoDB版本同步，完美支持最新的3.2.6版本
-    使用方式更像是自然语言，用起来更舒适。
-    简化mongodb java driver 的操作，降低学习成本。
-    支持MongoDB的授权机制（可以使用用户名和密码登录）、支持连接MongoDB副本集、读写分离、安全写入、SSL连接等特性。
-    内置JFinal和Resty插件。（基于最新版的JFinal和Resty）
+With some features such as supporting MongoDB’s authorization mechanism (Can login with user name and password), bridging copy set of MongoDB, R/ W splitting, write concern, SSL connection and so on.
 
-如有疑问可加群：557692142或发送邮件到t-baby@zomake.com
+Built-in JFinal and Resty plugins. (Base on the latest version of JFinal and Resty)
+
+Document:[中文](https://t-baby.gitbooks.io/mongodb-plugin/content/) | [English](https://t-baby.gitbooks.io/mongodb-plugin-english-version/content/)
+
+Maven：[http://search.maven.org/\#search%7Cga%7C1%7Ca%3A%22MongodbPlugin%22](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22MongodbPlugin%22)
+
+GitHub：[https://github.com/T-baby/MongoDB-Plugin/](https://github.com/T-baby/MongoDB-Plugin/)
+
+Developer：[https://github.com/T-baby/MongoDB-Plugin/](https://github.com/T-baby/MongoDB-Plugin/)
+
+Download：[https://github.com/T-baby/MongoDB-Plugin/releases](https://github.com/T-baby/MongoDB-Plugin/releases)
 
 
-帮助文件见：http://www.cybermkd.com/mongodb-plugin-2/

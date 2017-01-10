@@ -3,6 +3,8 @@ package com.cybermkd.mongo.kit;
 import com.cybermkd.mongo.kit.geospatial.MongoGeospatial;
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +25,21 @@ public class MongoDocumentKit {
             if (entry.getValue() instanceof MongoBean) {
                 Document doc = toDocument((MongoBean) entry.getValue());
                 map.put(entry.getKey(), doc);
+            }
+
+            if (entry.getValue() instanceof List) {
+                try {
+                    List<MongoBean> list = (List<MongoBean>) entry.getValue();
+                    List<Document> docList= new ArrayList<Document>();
+                    for (int i = 0; i < list.size(); i++) {
+                        Document doc = toDocument(list.get(i));
+                        docList.add(doc);
+                    }
+                    map.put(entry.getKey(), docList);
+                }catch (RuntimeException e){
+                    MongoKit.INSTANCE.error("MongoDocumentKit.class","The list must be List<MongoBean> inserted into the database.");
+                }
+
             }
         }
         return new Document(map);

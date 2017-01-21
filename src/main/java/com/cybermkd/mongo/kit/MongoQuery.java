@@ -272,7 +272,7 @@ public class MongoQuery {
     }
 
     public MongoQuery modify(String key, Object value) {
-        data.add(Updates.set(key, value));
+        data.add(Updates.set(key, MongoDocumentKit.toDocument(value)));
         return this;
     }
 

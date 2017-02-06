@@ -49,6 +49,23 @@ public class MongoDocumentKit {
         return new Document(bean.toMap());
     }
 
+    /*用于判断是否是基本类型，如果是的话不需要进行转换*/
+    public static boolean conversionValidation(Object obj) {
+        if (String.class.isInstance(obj) || Integer.class.isInstance(obj) || Double.class.isInstance(obj) ||
+                Boolean.class.isInstance(obj)|| Float.class.isInstance(obj) || Character.class.isInstance(obj) ||
+                Long.class.isInstance(obj) || Byte.class.isInstance(obj) || Short.class.isInstance(obj)){
+            return false;
+        }
+
+        if (obj instanceof Object){
+            return true;
+        }
+
+        return false;
+
+    }
+
+
 }
 
 

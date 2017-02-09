@@ -147,7 +147,7 @@ public enum MongoKit {
 
 
     public List<JSONObject> find(String collectionName, Bson query, Bson sort, Bson projection, int limit,
-                                 int skip, String join) {
+                                 int skip, final String join) {
 
         final List<JSONObject> list = new ArrayList<JSONObject>();
 

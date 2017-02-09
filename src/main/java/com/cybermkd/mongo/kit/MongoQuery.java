@@ -434,8 +434,8 @@ public class MongoQuery {
         return MongoKit.INSTANCE.update(collectionName, and(query), Updates.combine(data));
     }
 
-    public long updateOne() {
-        return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data));
+    public boolean updateOne() {
+        return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data)) > 0;
     }
 
 
@@ -449,8 +449,8 @@ public class MongoQuery {
         return MongoKit.INSTANCE.delete(collectionName, and(query));
     }
 
-    public long deleteOne() {
-        return MongoKit.INSTANCE.deleteOne(collectionName, and(query));
+    public boolean deleteOne() {
+        return MongoKit.INSTANCE.deleteOne(collectionName, and(query)) > 0;
     }
 
 }

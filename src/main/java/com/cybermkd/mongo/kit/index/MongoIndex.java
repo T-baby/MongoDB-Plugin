@@ -23,6 +23,11 @@ public class MongoIndex extends IndexOptions {
 
     private List<IndexModel> indexModels = new ArrayList<IndexModel>();
 
+    public MongoIndex() {
+
+    };
+
+
     public MongoIndex(String collectionName) {
         this.collectionName = collectionName;
     }

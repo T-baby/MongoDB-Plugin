@@ -1,7 +1,6 @@
 package com.cybermkd.mongo.kit;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cybermkd.mongo.kit.geospatial.MongoGeospatial;
 import com.mongodb.BasicDBObject;
@@ -129,7 +128,12 @@ public class MongoQuery {
     }
 
     public MongoQuery set(String key, Object value) {
-        document.append(key, value);
+        if (MongoDocumentKit.conversionValidation(value)) {
+            document.append(key, MongoDocumentKit.toDocument(value));
+        }else {
+            document.append(key, value);
+        }
+
         return this;
     }
 
@@ -261,18 +265,12 @@ public class MongoQuery {
         return this;
     }
 
-    public MongoQuery modify(Object obj) {
-        JSONObject json = (JSONObject) JSON.toJSON(obj);
-        for (String key : json.keySet()) {
-            if (json.getString(key) != null && !json.getString(key).isEmpty()) {
-                this.modify(key, json.getString(key));
-            }
-        }
-        return this;
-    }
-
     public MongoQuery modify(String key, Object value) {
-        data.add(Updates.set(key, value));
+        if (MongoDocumentKit.conversionValidation(value)) {
+            data.add(Updates.set(key, MongoDocumentKit.toDocument(value)));
+        } else {
+            data.add(Updates.set(key, value));
+        }
         return this;
     }
 
@@ -436,8 +434,8 @@ public class MongoQuery {
         return MongoKit.INSTANCE.update(collectionName, and(query), Updates.combine(data));
     }
 
-    public long updateOne() {
-        return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data));
+    public boolean updateOne() {
+        return MongoKit.INSTANCE.updateOne(collectionName, and(query), Updates.combine(data)) > 0;
     }
 
 
@@ -451,8 +449,8 @@ public class MongoQuery {
         return MongoKit.INSTANCE.delete(collectionName, and(query));
     }
 
-    public long deleteOne() {
-        return MongoKit.INSTANCE.deleteOne(collectionName, and(query));
+    public boolean deleteOne() {
+        return MongoKit.INSTANCE.deleteOne(collectionName, and(query)) > 0;
     }
 
 }

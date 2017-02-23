@@ -49,7 +49,17 @@ public class MongoPlugin {
 
     /*数据库授权*/
     public MongoPlugin auth(String username, String password) {
-        this.authList.add(MongoCredential.createCredential(username, this.database, password.toCharArray()));
+        this.authList.add(MongoCredential.createScramSha1Credential(username, this.database, password.toCharArray()));
+        return this;
+    }
+
+    public MongoPlugin authCR(String username, String password) {
+        this.authList.add(MongoCredential.createMongoCRCredential(username, this.database, password.toCharArray()));
+        return this;
+    }
+
+    public MongoPlugin authX509(String x509) {
+        this.authList.add(MongoCredential.createMongoX509Credential(x509));
         return this;
     }
 

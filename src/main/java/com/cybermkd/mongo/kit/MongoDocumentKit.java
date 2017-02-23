@@ -3,6 +3,8 @@ package com.cybermkd.mongo.kit;
 import com.cybermkd.mongo.kit.geospatial.MongoGeospatial;
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +26,21 @@ public class MongoDocumentKit {
                 Document doc = toDocument((MongoBean) entry.getValue());
                 map.put(entry.getKey(), doc);
             }
+
+            if (entry.getValue() instanceof List) {
+                try {
+                    List<MongoBean> list = (List<MongoBean>) entry.getValue();
+                    List<Document> docList= new ArrayList<Document>();
+                    for (int i = 0; i < list.size(); i++) {
+                        Document doc = toDocument(list.get(i));
+                        docList.add(doc);
+                    }
+                    map.put(entry.getKey(), docList);
+                }catch (RuntimeException e){
+                    MongoKit.INSTANCE.error("MongoDocumentKit.class","The list must be List<MongoBean> inserted into the database.");
+                }
+
+            }
         }
         return new Document(map);
     }
@@ -31,6 +48,23 @@ public class MongoDocumentKit {
     public static Document toDocument(MongoBean bean) {
         return new Document(bean.toMap());
     }
+
+    /*用于判断是否是基本类型，如果是的话不需要进行转换*/
+    public static boolean conversionValidation(Object obj) {
+        if (String.class.isInstance(obj) || Integer.class.isInstance(obj) || Double.class.isInstance(obj) ||
+                Boolean.class.isInstance(obj)|| Float.class.isInstance(obj) || Character.class.isInstance(obj) ||
+                Long.class.isInstance(obj) || Byte.class.isInstance(obj) || Short.class.isInstance(obj)){
+            return false;
+        }
+
+        if (obj instanceof Object){
+            return true;
+        }
+
+        return false;
+
+    }
+
 
 }
 

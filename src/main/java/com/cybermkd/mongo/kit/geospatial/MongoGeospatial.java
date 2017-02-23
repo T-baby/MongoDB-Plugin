@@ -19,7 +19,7 @@ public class MongoGeospatial {
 
     private Bson query;
 
-    private List<List<Double>> list = new ArrayList<>();
+    private List<List<Double>> list = new ArrayList<List<Double>>();
 
     public MongoGeospatial() {
 
@@ -35,7 +35,7 @@ public class MongoGeospatial {
     }
 
     public MongoGeospatial add(Double x, Double y) {
-        List<Double> temp = new ArrayList<>();
+        List<Double> temp = new ArrayList<Double>();
         temp.add(x);
         temp.add(y);
         list.add(temp);

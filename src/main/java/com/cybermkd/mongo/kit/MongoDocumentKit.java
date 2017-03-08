@@ -54,6 +54,7 @@ public class MongoDocumentKit {
 
             }
         }
+        map.remove("id");
         return new Document(map);
     }
 

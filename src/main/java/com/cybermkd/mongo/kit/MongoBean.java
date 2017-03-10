@@ -34,5 +34,9 @@ public class MongoBean implements Cloneable {
         return (JSONObject) JSON.toJSON(this);
     }
 
+    public String toJSONString() {
+        return  JSON.toJSONString(this);
+    }
+
 
 }

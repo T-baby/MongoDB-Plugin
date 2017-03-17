@@ -17,6 +17,7 @@ public class MongoDocumentKit {
 
         Map<String, Object> map;
 
+
         if (Document.class.isInstance(obj)) {
             return (Document) obj;
         }

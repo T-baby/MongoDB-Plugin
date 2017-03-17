@@ -17,6 +17,11 @@ public class MongoDocumentKit {
 
         Map<String, Object> map;
 
+
+        if (Document.class.isInstance(obj)) {
+            return (Document) obj;
+        }
+
         if (!Map.class.isInstance(obj)) {
             map = MongoKit.INSTANCE.toMap(obj);
         } else {
@@ -50,6 +55,11 @@ public class MongoDocumentKit {
 
             }
         }
+        String id = (String) map.get("id");
+        if (id == null || id.equals("")) {
+            map.remove("id");
+        }
+
         return new Document(map);
     }
 

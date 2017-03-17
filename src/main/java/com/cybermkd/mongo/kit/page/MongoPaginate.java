@@ -36,7 +36,7 @@ public class MongoPaginate {
             this.count = (int) totalRow;
         }
 
-        if (this.count <= 0 || this.page <= 0 || this.page > totalPage) {
+        if (totalRow != 0 && this.count <= 0 || this.page <= 0) {
             throw new RuntimeException("MongPage tips: (づ￣ 3￣)づ count or page is error !");
         }
 
